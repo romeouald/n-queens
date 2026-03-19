@@ -16,6 +16,6 @@ struct ConfigurationViewModel: Equatable, Hashable {
     var destination: Destination?
     
     mutating func startButtonTapped() {
-        destination = .game(.init())
+        destination = .game(.init(boardSize: boardSize))
     }
 }

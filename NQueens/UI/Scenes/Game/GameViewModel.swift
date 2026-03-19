@@ -8,5 +8,9 @@
 import Foundation
 
 struct GameViewModel: Equatable, Hashable {
+    var board: BoardViewModel
     
+    init(boardSize: Int) {
+        board = .init(board: .init(size: boardSize))
+    }
 }

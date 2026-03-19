@@ -12,7 +12,7 @@ struct GameView: View {
     
     var body: some View {
         VStack {
-            
+            BoardView(viewModel: viewModel.board)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
@@ -22,6 +22,6 @@ struct GameView: View {
 
 #Preview {
     NavigationStack {
-        GameView(viewModel: .init())
+        GameView(viewModel: .init(boardSize: 8))
     }
 }
