@@ -27,7 +27,7 @@ struct ConfigurationView: View {
                 .listRowBackground(Color.overlayDark)
                 
                 Section {
-                    Button(action: {}) {
+                    Button(action: { viewModel.startButtonTapped() }) {
                         Text("START GAME")
                             .font(.default.weight(.heavy))
                             .frame(maxWidth: .infinity)
@@ -45,6 +45,12 @@ struct ConfigurationView: View {
         .background(Color.background)
         .foregroundStyle(Color.white)
         .tint(Color.greenDark)
+        .navigationDestination(item: $viewModel.destination) { destination in
+            switch destination {
+            case .game(let viewModel):
+                GameView(viewModel: viewModel)
+            }
+        }
     }
 }
 
@@ -52,4 +58,5 @@ struct ConfigurationView: View {
     NavigationStack {
         ConfigurationView(viewModel: .init())
     }
+    .background(Color.background)
 }

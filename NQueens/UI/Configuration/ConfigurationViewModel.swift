@@ -7,6 +7,15 @@
 
 import Foundation
 
-struct ConfigurationViewModel {
+struct ConfigurationViewModel: Equatable, Hashable {
     var boardSize: Int = 4
+    
+    enum Destination: Equatable, Hashable {
+        case game(GameViewModel)
+    }
+    var destination: Destination?
+    
+    mutating func startButtonTapped() {
+        destination = .game(.init())
+    }
 }
