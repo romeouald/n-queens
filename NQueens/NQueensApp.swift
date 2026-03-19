@@ -11,7 +11,9 @@ import SwiftUI
 struct NQueensApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Welcome to NQueens")
+            NavigationStack {
+                ConfigurationView(viewModel: .init())
+            }
         }
     }
 }
