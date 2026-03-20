@@ -7,6 +7,6 @@
 
 extension Chess {
     protocol Game {
-        func squareTapped(at index: Int, on board: Board)
+        func squareTapped(at index: Int, on board: inout Board)
     }
 }

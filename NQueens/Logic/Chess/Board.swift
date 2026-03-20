@@ -8,7 +8,7 @@
 extension Chess {
     struct Board: Equatable, Hashable {
         let size: Int
-        let squares: [Square]
+        private(set) var squares: [Square]
         
         init(size: Int) {
             if size <= 0 { assertionFailure("Board size must be greater than 0") }
@@ -23,6 +23,14 @@ extension Chess {
         
         func column(for index: Int) -> Int {
             index % size
+        }
+        
+        mutating func setPiece(_ piece: Piece, at index: Int) {
+            squares[index].piece = piece
+        }
+
+        mutating func removePiece(at index: Int) {
+            squares[index].piece = nil
         }
     }
 }

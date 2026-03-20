@@ -18,6 +18,6 @@ class BoardViewModel {
     }
     
     func squareTapped(at index: Int) {
-        game.squareTapped(at: index, on: board)
+        game.squareTapped(at: index, on: &board)
     }
 }
