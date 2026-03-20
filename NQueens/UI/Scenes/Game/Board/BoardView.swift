@@ -27,6 +27,7 @@ struct BoardView: View {
                 
                 square(
                     color: color,
+                    piece: viewModel.board.squares[i].piece,
                     font: font,
                     padding: padding,
                     rowLabel: column == 0 ? row.formatted(.index) : nil,
@@ -47,6 +48,7 @@ struct BoardView: View {
     
     private func square(
         color: Chess.Color,
+        piece: Chess.Piece?,
         font: Font,
         padding: CGFloat,
         rowLabel: String?,
@@ -66,6 +68,11 @@ struct BoardView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .padding(.trailing, padding)
                     .padding(.bottom, padding / 2)
+            }
+            
+            if let piece {
+                Image(piece.image)
+                    .resizable()
             }
         }
         .font(font)
@@ -88,6 +95,22 @@ private extension Chess.Color {
         }
     }
 }
+
+private extension Chess.Piece {
+    var image: ImageResource {
+        switch self.color {
+        case .light:
+            switch self.type {
+            case .queen: .queenLight
+            }
+        case .dark:
+            switch self.type {
+            case .queen: .queenDark
+            }
+        }
+    }
+}
+
 
 #Preview {
     NavigationStack {
