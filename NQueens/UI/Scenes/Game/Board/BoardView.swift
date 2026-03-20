@@ -24,9 +24,11 @@ struct BoardView: View {
                 let column = viewModel.board.column(for: i)
                 let isDark = row.isMultiple(of: 2) == column.isMultiple(of: 2)
                 let color = isDark ? Chess.Color.dark : .light
+                let hasConflict = viewModel.board.squares[i].hasConflict
                 
                 square(
                     color: color,
+                    hasConflict: hasConflict,
                     piece: viewModel.board.squares[i].piece,
                     font: font,
                     padding: padding,
@@ -48,6 +50,7 @@ struct BoardView: View {
     
     private func square(
         color: Chess.Color,
+        hasConflict: Bool,
         piece: Chess.Piece?,
         font: Font,
         padding: CGFloat,
@@ -68,6 +71,10 @@ struct BoardView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .padding(.trailing, padding)
                     .padding(.bottom, padding / 2)
+            }
+            
+            if hasConflict {
+                Rectangle().fill(Color.overlayError)
             }
             
             if let piece {
