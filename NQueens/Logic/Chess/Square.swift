@@ -8,5 +8,6 @@
 extension Chess.Board {
     struct Square: Equatable, Hashable {
         var piece: Chess.Piece?
+        var hasConflict: Bool = false
     }
 }

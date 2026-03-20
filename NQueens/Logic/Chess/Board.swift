@@ -32,5 +32,13 @@ extension Chess {
         mutating func removePiece(at index: Int) {
             squares[index].piece = nil
         }
+        
+        mutating func setConflicts(at indices: Set<Int>) {
+            indices.forEach { squares[$0].hasConflict = true }
+        }
+        
+        mutating func removeAllConflicts() {
+            for i in 0 ..< squares.count { squares[i].hasConflict = false }
+        }
     }
 }
