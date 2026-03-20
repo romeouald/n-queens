@@ -12,9 +12,19 @@ struct NQueens: Chess.Game {
         let square = board.squares[index]
         
         if square.piece == nil {
-            board.setPiece(.init(type: .queen, color: .light), at: index)
+            if canPlacePiece(on: board) {
+                board.setPiece(.init(type: .queen, color: .light), at: index)
+            }
         } else {
             board.removePiece(at: index)
         }
+    }
+    
+    private func canPlacePiece(on board: Chess.Board) -> Bool {
+        let numberOfQueens = board.squares
+            .filter { $0.piece?.type == .queen }
+            .count
+        
+        return numberOfQueens < board.size
     }
 }
