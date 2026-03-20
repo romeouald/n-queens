@@ -22,6 +22,9 @@ struct GameView: View {
 
 #Preview {
     NavigationStack {
-        GameView(viewModel: .init(boardSize: 8))
+        GameView(viewModel: .init(
+            boardSize: 8,
+            game: NQueens()
+        ))
     }
 }

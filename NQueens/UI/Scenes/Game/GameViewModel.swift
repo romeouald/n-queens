@@ -7,10 +7,17 @@
 
 import Foundation
 
-struct GameViewModel: Equatable, Hashable {
+@Observable
+class GameViewModel {
     var board: BoardViewModel
     
-    init(boardSize: Int) {
-        board = .init(board: .init(size: boardSize))
+    init(
+        boardSize: Int,
+        game: any Chess.Game
+    ) {
+        board = .init(
+            board: .init(size: boardSize),
+            game: game
+        )
     }
 }

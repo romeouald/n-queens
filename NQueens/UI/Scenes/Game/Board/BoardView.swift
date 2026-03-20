@@ -37,6 +37,9 @@ struct BoardView: View {
                     x: CGFloat(column) * squareSideLength,
                     y: geometry.size.height - CGFloat(row + 1) * squareSideLength
                 )
+                .onTapGesture {
+                    viewModel.squareTapped(at: i)
+                }
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -88,6 +91,9 @@ private extension Chess.Color {
 
 #Preview {
     NavigationStack {
-        BoardView(viewModel: .init(board: .init(size: 8)))
+        BoardView(viewModel: .init(
+            board: .init(size: 8),
+            game: NQueens()
+        ))
     }
 }

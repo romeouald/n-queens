@@ -47,8 +47,8 @@ struct ConfigurationView: View {
         .tint(Color.greenDark)
         .navigationDestination(item: $viewModel.destination) { destination in
             switch destination {
-            case .game(let viewModel):
-                GameView(viewModel: viewModel)
+            case let .game(boardSize):
+                GameView(viewModel: .init(boardSize: boardSize, game: NQueens()))
             }
         }
     }
