@@ -11,8 +11,18 @@ extension Chess {
         let squares: [Square]
         
         init(size: Int) {
+            if size <= 0 { assertionFailure("Board size must be greater than 0") }
+            
             self.size = size
             self.squares = Array(repeating: Square(), count: size * size)
+        }
+        
+        func row(for index: Int) -> Int {
+            index / size
+        }
+        
+        func column(for index: Int) -> Int {
+            index % size
         }
     }
 }

@@ -20,8 +20,8 @@ struct BoardView: View {
             let padding = squareSideLength * 0.05
             
             ForEach(0 ..< viewModel.board.squares.count, id: \.self) { i in
-                let row = i / viewModel.board.size
-                let column = i % viewModel.board.size
+                let row = viewModel.board.row(for: i)
+                let column = viewModel.board.column(for: i)
                 let isDark = row.isMultiple(of: 2) == column.isMultiple(of: 2)
                 let color = isDark ? Chess.Color.dark : .light
                 
