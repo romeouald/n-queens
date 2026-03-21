@@ -9,9 +9,12 @@ import Foundation
 
 @Observable
 class GameViewModel {
+    private var bestTimeStore: BestTimeStore
+
     var board: Chess.Board
     var game: any Chess.Game
     
+    var bestTime: Duration?
     var startTime: Date?
     var finishTime: Date?
     var elapsedTime: Duration {
@@ -25,11 +28,17 @@ class GameViewModel {
     var gameFinished: Bool { finishTime != nil }
     
     init(
+        bestTimeStore: BestTimeStore = .init(),
         boardSize: Int,
         game: any Chess.Game
     ) {
+        self.bestTimeStore = bestTimeStore
         self.board = .init(size: boardSize)
         self.game = game
+        
+        if let bestTime = bestTimeStore.bestTime(for: boardSize) {
+            self.bestTime = Duration.seconds(bestTime)
+        }
     }
     
     func startGame() {

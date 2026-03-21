@@ -26,14 +26,27 @@ struct GameView: View {
     }
     
     private var timerView: some View {
-        StatCell(icon: Image(systemName: "clock")) {
-            TimelineView(.animation(minimumInterval: 0.05, paused: viewModel.gameFinished)) { _ in
-                Text(viewModel.elapsedTime.formatted(
-                    .time(pattern: .minuteSecond(
-                        padMinuteToLength: 2,
-                        fractionalSecondsLength: 1
+        HStack(spacing: 24) {
+            if let bestTime = viewModel.bestTime {
+                StatCell(icon: Image(systemName: "trophy")) {
+                    Text(bestTime.formatted(
+                        .time(pattern: .minuteSecond(
+                            padMinuteToLength: 2,
+                            fractionalSecondsLength: 1
+                        ))
                     ))
-                ))
+                }
+            }
+            
+            StatCell(icon: Image(systemName: "clock")) {
+                TimelineView(.animation(minimumInterval: 0.05, paused: viewModel.gameFinished)) { _ in
+                    Text(viewModel.elapsedTime.formatted(
+                        .time(pattern: .minuteSecond(
+                            padMinuteToLength: 2,
+                            fractionalSecondsLength: 1
+                        ))
+                    ))
+                }
             }
         }
     }
