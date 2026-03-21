@@ -25,7 +25,7 @@ enum PersistentStore {
     enum Context {
         static var live: ModelContext {
             get throws {
-                return ModelContext(try PersistentStore.Container.make(inMemory: true))
+                return ModelContext(try PersistentStore.Container.make())
             }
         }
 
