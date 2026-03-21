@@ -6,7 +6,12 @@
 //
 
 extension Chess {
+    enum GameResult {
+        case ongoing
+        case finished
+    }
+    
     protocol Game {
-        func squareTapped(at index: Int, on board: inout Board)
+        func squareTapped(at index: Int, on board: inout Board) -> GameResult
     }
 }

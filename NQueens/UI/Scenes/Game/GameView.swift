@@ -31,7 +31,7 @@ struct GameView: View {
                 .resizable()
                 .frame(width: 15, height: 15)
                 .fontWeight(.black)
-            TimelineView(.animation(minimumInterval: 0.05)) { _ in
+            TimelineView(.animation(minimumInterval: 0.05, paused: viewModel.gameFinished)) { _ in
                 Text(viewModel.elapsedTime.formatted(
                     .time(pattern: .minuteSecond(
                         padMinuteToLength: 2,
@@ -52,7 +52,7 @@ struct GameView: View {
 #Preview {
     NavigationStack {
         GameView(viewModel: .init(
-            boardSize: 8,
+            boardSize: 4,
             game: NQueens()
         ))
     }

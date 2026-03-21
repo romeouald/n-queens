@@ -13,11 +13,16 @@ class GameViewModel {
     var game: any Chess.Game
     
     var startTime: Date?
+    var finishTime: Date?
     var elapsedTime: Duration {
         guard let startTime else { return .zero }
-        let elapsed = -startTime.timeIntervalSinceNow
+        
+        let endTime = finishTime ?? Date()
+        let elapsed = endTime.timeIntervalSince(startTime)
         return Duration.seconds(elapsed)
     }
+    
+    var gameFinished: Bool { finishTime != nil }
     
     init(
         boardSize: Int,
@@ -33,6 +38,14 @@ class GameViewModel {
     }
     
     func squareTapped(at index: Int) {
-        game.squareTapped(at: index, on: &board)
+        guard !gameFinished else { return }
+        
+        let result = game.squareTapped(at: index, on: &board)
+        switch result {
+        case .ongoing:
+            break
+        case .finished:
+            finishTime = Date()
+        }
     }
 }

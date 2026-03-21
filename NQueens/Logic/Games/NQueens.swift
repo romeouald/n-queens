@@ -9,12 +9,12 @@ import Foundation
 
 struct NQueens: Chess.Game {
     enum EvaluationResult {
-        case normal
+        case unsolved
         case conflicts(indices: Set<Int>)
         case solved
     }
     
-    func squareTapped(at index: Int, on board: inout Chess.Board) {
+    func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.GameResult {
         let square = board.squares[index]
         
         if square.piece == nil {
@@ -29,10 +29,13 @@ struct NQueens: Chess.Game {
         let result = evaluateGame(on: board)
 
         switch result {
-        case .normal, .solved:
-            break
+        case .unsolved:
+            return .ongoing
         case .conflicts(let indices):
             board.setConflicts(at: indices)
+            return .ongoing
+        case .solved:
+            return .finished
         }
     }
     
@@ -45,10 +48,7 @@ struct NQueens: Chess.Game {
     }
     
     private func evaluateGame(on board: Chess.Board) -> EvaluationResult {
-        let queens = board.squares
-            .enumerated()
-            .filter { $0.element.piece?.type == .queen }
-        
+        var placedQueens = 0
         var conflictingIndices = Set<Int>()
         
         var firstInRow = [Int: Int]()
@@ -56,7 +56,10 @@ struct NQueens: Chess.Game {
         var firstInPosDiag = [Int: Int]() // row + col
         var firstInNegDiag = [Int: Int]() // row - col
         
-        for (i, queen) in queens {
+        for i in 0 ..< board.squares.count {
+            guard board.squares[i].piece?.type == .queen else { continue }
+            placedQueens += 1
+            
             let row = board.row(for: i)
             let column = board.column(for: i)
             let positiveDiagonal = row + column
@@ -91,10 +94,12 @@ struct NQueens: Chess.Game {
             }
         }
         
-        guard conflictingIndices.isEmpty else {
+        if !conflictingIndices.isEmpty {
             return .conflicts(indices: conflictingIndices)
+        } else if placedQueens < board.size {
+            return .unsolved
+        } else {
+            return .solved
         }
-        
-        return .normal
     }
 }
