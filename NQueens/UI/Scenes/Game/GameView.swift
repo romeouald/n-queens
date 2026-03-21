@@ -26,11 +26,7 @@ struct GameView: View {
     }
     
     private var timerView: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "clock")
-                .resizable()
-                .frame(width: 15, height: 15)
-                .fontWeight(.black)
+        StatCell(icon: Image(systemName: "clock")) {
             TimelineView(.animation(minimumInterval: 0.05, paused: viewModel.gameFinished)) { _ in
                 Text(viewModel.elapsedTime.formatted(
                     .time(pattern: .minuteSecond(
@@ -40,12 +36,29 @@ struct GameView: View {
                 ))
             }
         }
-        .foregroundStyle(.white)
-        .font(Font.system(size: 16, weight: .bold))
-        .monospacedDigit()
-        .padding(10)
-        .background(.black)
-        .clipShape(RoundedRectangle(cornerRadius: 5))
+    }
+}
+
+private extension GameView {
+    struct StatCell<Content: View>: View {
+        let icon: Image
+        let content: () -> Content
+        
+        var body: some View {
+            HStack(spacing: 8) {
+                icon
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .fontWeight(.black)
+                content()
+            }
+            .foregroundStyle(.white)
+            .font(Font.system(size: 16, weight: .bold))
+            .monospacedDigit()
+            .padding(10)
+            .background(.black)
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+        }
     }
 }
 
