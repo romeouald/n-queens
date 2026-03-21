@@ -55,6 +55,10 @@ class GameViewModel {
             break
         case .finished:
             finishTime = Date()
+            
+            if bestTime == nil || elapsedTime < bestTime! {
+                bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval)
+            }
         }
     }
 }
