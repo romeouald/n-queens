@@ -23,6 +23,22 @@ struct ConfigurationView: View {
                         }
                     }
                     .pickerStyle(.menu)
+                } footer: {
+                    HStack(spacing: 3) {
+                        Text("Best time:")
+                        
+                        if let bestTime = viewModel.bestTime {
+                            Text(bestTime.formatted(
+                                .time(pattern: .minuteSecond(
+                                    padMinuteToLength: 2,
+                                    fractionalSecondsLength: 1
+                                ))
+                            ))
+                        } else {
+                            Text("none")
+                                .italic()
+                        }
+                    }
                 }
                 .listRowBackground(Color.overlayDark)
                 
