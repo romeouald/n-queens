@@ -12,7 +12,10 @@ struct GameView: View {
     
     var body: some View {
         VStack {
-            BoardView(viewModel: viewModel.board)
+            BoardView(board: viewModel.board)
+                .onSquareTap { index in
+                    viewModel.squareTapped(at: index)
+                }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)

@@ -9,15 +9,18 @@ import Foundation
 
 @Observable
 class GameViewModel {
-    var board: BoardViewModel
+    var board: Chess.Board
+    var game: any Chess.Game
     
     init(
         boardSize: Int,
         game: any Chess.Game
     ) {
-        board = .init(
-            board: .init(size: boardSize),
-            game: game
-        )
+        self.board = .init(size: boardSize)
+        self.game = game
+    }
+    
+    func squareTapped(at index: Int) {
+        game.squareTapped(at: index, on: &board)
     }
 }

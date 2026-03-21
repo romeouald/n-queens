@@ -8,28 +8,39 @@
 import SwiftUI
 
 struct BoardView: View {
-    @State var viewModel: BoardViewModel
+    let board: Chess.Board
+    private var onSquareTap: ((_ index: Int) -> Void)?
+    
+    init(board: Chess.Board) {
+        self.board = board
+    }
+    
+    func onSquareTap(_ callback: ((_ index: Int) -> Void)?) -> Self {
+        var view = self
+        view.onSquareTap = callback
+        return view
+    }
     
     var body: some View {
         GeometryReader { geometry in
             let sideLength = min(geometry.size.width, geometry.size.height)
-            let squareSideLength = sideLength / Double(viewModel.board.size)
+            let squareSideLength = sideLength / Double(board.size)
             
             let fontSize = squareSideLength * 0.25
             let font = Font.system(size: fontSize, weight: .bold)
             let padding = squareSideLength * 0.05
             
-            ForEach(0 ..< viewModel.board.squares.count, id: \.self) { i in
-                let row = viewModel.board.row(for: i)
-                let column = viewModel.board.column(for: i)
+            ForEach(0 ..< board.squares.count, id: \.self) { i in
+                let row = board.row(for: i)
+                let column = board.column(for: i)
                 let isDark = row.isMultiple(of: 2) == column.isMultiple(of: 2)
                 let color = isDark ? Chess.Color.dark : .light
-                let hasConflict = viewModel.board.squares[i].hasConflict
+                let hasConflict = board.squares[i].hasConflict
                 
                 square(
                     color: color,
                     hasConflict: hasConflict,
-                    piece: viewModel.board.squares[i].piece,
+                    piece: board.squares[i].piece,
                     font: font,
                     padding: padding,
                     rowLabel: column == 0 ? row.formatted(.index) : nil,
@@ -41,7 +52,7 @@ struct BoardView: View {
                     y: geometry.size.height - CGFloat(row + 1) * squareSideLength
                 )
                 .onTapGesture {
-                    viewModel.squareTapped(at: i)
+                    onSquareTap?(i)
                 }
             }
         }
@@ -121,9 +132,8 @@ private extension Chess.Piece {
 
 #Preview {
     NavigationStack {
-        BoardView(viewModel: .init(
-            board: .init(size: 8),
-            game: NQueens()
-        ))
+        BoardView(
+            board: .init(size: 8)
+        )
     }
 }
