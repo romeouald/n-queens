@@ -71,6 +71,7 @@ struct GameView: View {
             Text("\(viewModel.progress.step) / \(viewModel.progress.total)")
                 .foregroundStyle(.white)
                 .font(Font.system(size: 16, weight: .black))
+                .monospacedDigit()
         }
     }
 }
