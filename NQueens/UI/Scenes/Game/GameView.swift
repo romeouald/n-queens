@@ -55,21 +55,22 @@ struct GameView: View {
     
     private var progressView: some View {
         HStack(alignment: .center, spacing: 12) {
-            progresssBar
-                .frame(height: 12)
-            Text("\(viewModel.progress.step) / \(viewModel.progress.total)")
-                .foregroundStyle(.white)
-                .font(Font.system(size: 16, weight: .black))
-        }
-    }
-    
-    private var progresssBar: some View {
-        GeometryReader { geometry in
+            GeometryReader { geometry in
                 Capsule()
                     .fill(.black)
                 Capsule()
-                    .fill(Color.greenDark)
+                    .fill(.greenDark)
+                    .animation(.default, value: viewModel.gameFinished)
+                    .overlay(Capsule().fill(.overlayError.opacity(viewModel.hasError ? 1 : 0)))
+                    .animation(.default, value: viewModel.hasError)
                     .frame(width: geometry.size.width * viewModel.progress.percentage)
+                    .animation(.default, value: viewModel.progress.percentage)
+            }
+            .frame(height: 12)
+            
+            Text("\(viewModel.progress.step) / \(viewModel.progress.total)")
+                .foregroundStyle(.white)
+                .font(Font.system(size: 16, weight: .black))
         }
     }
 }
