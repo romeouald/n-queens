@@ -10,12 +10,12 @@ import SwiftData
 
 @Observable
 class ConfigurationViewModel {
-    private var bestTimeStore: BestTimeStore
+    private var bestTimeStore: any BestTimeStoring
 
     var boardSize: Int = 4
     
     init(
-        bestTimeStore: BestTimeStore = .init()
+        bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live)
     ) {
         self.bestTimeStore = bestTimeStore
     }

@@ -8,10 +8,15 @@
 import Foundation
 import SwiftData
 
-class BestTimeStore: Sendable {
+protocol BestTimeStoring {
+    func bestTime(for boardSize: Int) -> TimeInterval?
+    func saveBestTime(boardSize: Int, time: TimeInterval)
+}
+
+class BestTimeStore: BestTimeStoring {
     private var context: ModelContext?
     
-    init(context: ModelContext? = .live) {
+    init(context: ModelContext?) {
         self.context =  context
     }
     

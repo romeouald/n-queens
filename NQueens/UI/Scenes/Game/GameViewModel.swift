@@ -10,7 +10,7 @@ import SwiftUI
 
 @Observable
 class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration {
-    private var bestTimeStore: BestTimeStore
+    private var bestTimeStore: any BestTimeStoring
     private var clock: GameClock
 
     private(set) var board: Chess.Board
@@ -43,7 +43,7 @@ class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration {
     var dismiss: DismissAction?
     
     init(
-        bestTimeStore: BestTimeStore = .init(),
+        bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live),
         clock: GameClock = .continuous,
         boardSize: Int,
         game: any Chess.Game.Interface
