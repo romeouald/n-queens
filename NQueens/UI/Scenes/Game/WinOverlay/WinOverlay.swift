@@ -47,7 +47,7 @@ struct WinOverlay: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.7)
+            Color.black.opacity(0.8)
                 .ignoresSafeArea()
             
             VStack(spacing: 24) {
@@ -87,6 +87,7 @@ struct WinOverlay: View {
             .padding(24)
             .foregroundStyle(.white)
             .background(Color.background)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .frame(maxWidth: 300)
         }
         .onAppear {
