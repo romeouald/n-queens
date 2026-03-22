@@ -22,6 +22,16 @@ struct NQueens: Chess.Game.Interface {
         return evaluateGame(on: &board)
     }
     
+    func reset(board: inout Chess.Board) -> Chess.Game.MoveResult {
+        board.removeAllConflicts()
+        board.removeAllPieces()
+        
+        return .init(
+            gameStatus: .normal,
+            progress: .init(step: 0, total: board.size)
+        )
+    }
+    
     private func canPlacePiece(on board: Chess.Board) -> Bool {
         let numberOfQueens = board.squares
             .filter { $0.piece?.type == .queen }

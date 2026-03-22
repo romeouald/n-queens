@@ -12,6 +12,7 @@ extension Chess {
 extension Chess.Game {
     protocol Interface {
         func squareTapped(at index: Int, on board: inout Chess.Board) -> MoveResult
+        func reset(board: inout Chess.Board) -> MoveResult
     }
     
     struct MoveResult {

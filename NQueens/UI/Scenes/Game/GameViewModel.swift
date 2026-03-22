@@ -55,6 +55,15 @@ class GameViewModel {
     }
     
     func resetGame() {
+        let result = game.reset(board: &board)
+        gameStatus = result.gameStatus
+        progress = result.progress
+        startTime = Date()
+        finishTime = nil
+
+        if let bestTime = bestTimeStore.bestTime(for: board.size) {
+            self.bestTime = Duration.seconds(bestTime)
+        }
     }
     
     func squareTapped(at index: Int) {

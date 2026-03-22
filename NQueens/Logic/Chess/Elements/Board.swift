@@ -33,6 +33,10 @@ extension Chess {
             squares[index].piece = nil
         }
         
+        mutating func removeAllPieces() {
+            for i in 0 ..< squares.count { squares[i].piece = nil }
+        }
+
         mutating func setConflicts(at indices: Set<Int>) {
             indices.forEach { squares[$0].hasConflict = true }
         }
