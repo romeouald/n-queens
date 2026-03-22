@@ -77,9 +77,6 @@ private extension GameView {
 
 #Preview {
     NavigationStack {
-        GameView(viewModel: .init(
-            boardSize: 4,
-            game: NQueens()
-        ))
+        GameView(viewModel: .preview)
     }
 }

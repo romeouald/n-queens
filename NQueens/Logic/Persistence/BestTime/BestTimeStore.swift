@@ -11,7 +11,7 @@ import SwiftData
 class BestTimeStore: Sendable {
     private var context: ModelContext?
     
-    init(context: ModelContext? = try? PersistentStore.Context.live) {
+    init(context: ModelContext? = .live) {
         self.context =  context
     }
     

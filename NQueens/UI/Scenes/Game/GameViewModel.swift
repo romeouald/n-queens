@@ -62,3 +62,13 @@ class GameViewModel {
         }
     }
 }
+
+extension GameViewModel {
+    static var preview: GameViewModel {
+        .init(
+            bestTimeStore: BestTimeStore(context: .preview),
+            boardSize: 4,
+            game: NQueens()
+        )
+    }
+}

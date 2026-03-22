@@ -7,33 +7,33 @@
 
 import SwiftData
 
-enum PersistentStore {
+private extension ModelContainer {
+    static func make(inMemory: Bool = false) throws -> ModelContainer {
+        let schema = Schema([
+            BestTimeModel.self,
+        ])
+        let config = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: inMemory
+        )
+        return try ModelContainer(for: schema, configurations: config)
+    }
+}
     
-    enum Container {
-        static func make(inMemory: Bool = false) throws -> ModelContainer {
-            let schema = Schema([
-                BestTimeModel.self,
-            ])
-            let config = ModelConfiguration(
-                schema: schema,
-                isStoredInMemoryOnly: inMemory
-            )
-            return try ModelContainer(for: schema, configurations: config)
+extension ModelContext {
+    static var live: ModelContext? {
+        guard let container = try? ModelContainer.make() else {
+            return nil
         }
+        
+        return ModelContext(container)
     }
     
-    enum Context {
-        static var live: ModelContext {
-            get throws {
-                return ModelContext(try PersistentStore.Container.make())
-            }
+    static var preview: ModelContext? {
+        guard let container = try? ModelContainer.make(inMemory: true) else {
+            return nil
         }
-
-        static var preview: ModelContext {
-            get throws {
-                return ModelContext(try PersistentStore.Container.make(inMemory: true))
-            }
-        }
+        
+        return ModelContext(container)
     }
-    
 }
