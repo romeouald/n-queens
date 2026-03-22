@@ -17,6 +17,8 @@ struct GameView: View {
                 .onSquareTap { index in
                     viewModel.squareTapped(at: index)
                 }
+            progressView
+                .padding(.horizontal, 24)
             
         }
         .onAppear { viewModel.startGame() }
@@ -48,6 +50,26 @@ struct GameView: View {
                     ))
                 }
             }
+        }
+    }
+    
+    private var progressView: some View {
+        HStack(alignment: .center, spacing: 12) {
+            progresssBar
+                .frame(height: 12)
+            Text("\(viewModel.progress.step) / \(viewModel.progress.total)")
+                .foregroundStyle(.white)
+                .font(Font.system(size: 16, weight: .black))
+        }
+    }
+    
+    private var progresssBar: some View {
+        GeometryReader { geometry in
+                Capsule()
+                    .fill(.black)
+                Capsule()
+                    .fill(Color.greenDark)
+                    .frame(width: geometry.size.width * viewModel.progress.percentage)
         }
     }
 }
