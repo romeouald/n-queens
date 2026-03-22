@@ -35,17 +35,38 @@ struct BoardView: View {
                 let column = board.column(for: i)
                 let isDark = row.isMultiple(of: 2) == column.isMultiple(of: 2)
                 let color = isDark ? Chess.Color.dark : .light
-                let hasConflict = board.squares[i].hasConflict
+                let piece = board.squares[i].piece
                 
-                square(
-                    color: color,
-                    hasConflict: hasConflict,
-                    piece: board.squares[i].piece,
-                    font: font,
-                    padding: padding,
-                    rowLabel: column == 0 ? row.formatted(.index) : nil,
-                    columnLabel: row == 0 ? column.formatted(.alpha) : nil
-                )
+                ZStack {
+                    Rectangle().fill(color.squareColor)
+                    
+                    // Row labels (number)
+                    if column == 0 {
+                        Text("\(row.formatted(.index))")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .padding(padding)
+                    }
+
+                    // Column labels (aplha)
+                    if row == 0 {
+                        Text("\(column.formatted(.alpha))")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                            .padding(.trailing, padding)
+                            .padding(.bottom, padding / 2)
+                    }
+                    
+                    // Conflict color overlay
+                    if board.squares[i].hasConflict {
+                        Rectangle().fill(Color.overlayError)
+                    }
+                    
+                    // Piece
+                    if let piece {
+                        Image(piece.image)
+                            .resizable()
+                    }
+                }
+                .foregroundStyle(color.labelColor)
                 .frame(width: squareSideLength, height: squareSideLength)
                 .offset(
                     x: CGFloat(column) * squareSideLength,
@@ -55,6 +76,7 @@ struct BoardView: View {
                     onSquareTap?(i)
                 }
             }
+            .font(font)
         }
         .aspectRatio(1, contentMode: .fit)
     }
