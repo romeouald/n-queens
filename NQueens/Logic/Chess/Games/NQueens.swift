@@ -7,14 +7,8 @@
 
 import Foundation
 
-struct NQueens: Chess.Game {
-    struct EvaluationResult {
-        let pieces: Int
-        let conflicts: Set<Int>?
-        let solved: Bool
-    }
-    
-    func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.GameResult {
+struct NQueens: Chess.Game.Interface {
+    func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
         let square = board.squares[index]
         
         if square.piece == nil {
@@ -25,20 +19,7 @@ struct NQueens: Chess.Game {
             board.removePiece(at: index)
         }
         
-        board.removeAllConflicts()
-        let result = evaluateGame(on: board)
-
-        if let conflicts = result.conflicts {
-            board.setConflicts(at: conflicts)
-        }
-
-        if result.solved {
-            return .finished
-        } else {
-            return .ongoing(
-                progress: .init(step: result.pieces, total: board.size)
-            )
-        }
+        return evaluateGame(on: &board)
     }
     
     private func canPlacePiece(on board: Chess.Board) -> Bool {
@@ -49,9 +30,10 @@ struct NQueens: Chess.Game {
         return numberOfQueens < board.size
     }
     
-    private func evaluateGame(on board: Chess.Board) -> EvaluationResult {
-        var placedQueens = 0
-        var conflictingIndices = Set<Int>()
+    private func evaluateGame(on board: inout Chess.Board) -> Chess.Game.MoveResult {
+        board.removeAllConflicts()
+        var conflictingIndices: Set<Int> = []
+        var queenCount = 0
         
         var firstInRow = [Int: Int]()
         var firstInCol = [Int: Int]()
@@ -60,7 +42,7 @@ struct NQueens: Chess.Game {
         
         for i in 0 ..< board.squares.count {
             guard board.squares[i].piece?.type == .queen else { continue }
-            placedQueens += 1
+            queenCount += 1
             
             let row = board.row(for: i)
             let column = board.column(for: i)
@@ -96,10 +78,17 @@ struct NQueens: Chess.Game {
             }
         }
         
+        var gameStatus: Chess.Game.Status = .normal
+        if !conflictingIndices.isEmpty {
+            board.setConflicts(at: conflictingIndices)
+            gameStatus = .conflicting
+        } else if queenCount == board.size {
+            gameStatus = .solved
+        }
+        
         return .init(
-            pieces: placedQueens,
-            conflicts: conflictingIndices.isEmpty ? nil : conflictingIndices,
-            solved: placedQueens == board.size && conflictingIndices.isEmpty
+            gameStatus: gameStatus,
+            progress: .init(step: queenCount, total: board.size)
         )
     }
 }

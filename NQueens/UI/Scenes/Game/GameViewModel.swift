@@ -11,12 +11,12 @@ import Foundation
 class GameViewModel {
     private var bestTimeStore: BestTimeStore
 
-    var board: Chess.Board
-    var game: any Chess.Game
+    private(set) var board: Chess.Board
+    private var game: any Chess.Game.Interface
     
-    var bestTime: Duration?
-    var startTime: Date?
-    var finishTime: Date?
+    private(set) var bestTime: Duration?
+    private(set) var startTime: Date?
+    private(set) var finishTime: Date?
     var elapsedTime: Duration {
         guard let startTime else { return .zero }
         
@@ -24,16 +24,17 @@ class GameViewModel {
         let elapsed = endTime.timeIntervalSince(startTime)
         return Duration.seconds(elapsed)
     }
-    
-    typealias Progress = Chess.GameResult.Progress
-    var progress: Progress
-    
-    var gameFinished: Bool { finishTime != nil }
+
+    typealias Progress = Chess.Game.Progress
+    private(set) var progress: Progress
+    private var gameStatus: Chess.Game.Status
+    var hasError: Bool { gameStatus == .conflicting }
+    var gameFinished: Bool { gameStatus == .solved }
     
     init(
         bestTimeStore: BestTimeStore = .init(),
         boardSize: Int,
-        game: any Chess.Game
+        game: any Chess.Game.Interface
     ) {
         self.bestTimeStore = bestTimeStore
         self.board = .init(size: boardSize)
@@ -43,6 +44,7 @@ class GameViewModel {
             self.bestTime = Duration.seconds(bestTime)
         }
         self.progress = .init(step: 0, total: boardSize)
+        self.gameStatus = .normal
     }
     
     func startGame() {
@@ -54,13 +56,12 @@ class GameViewModel {
         guard !gameFinished else { return }
         
         let result = game.squareTapped(at: index, on: &board)
-        switch result {
-        case .ongoing(let progress):
-            self.progress = progress
-        case .finished:
+        gameStatus = result.gameStatus
+        progress = result.progress
+
+        if gameFinished {
             finishTime = Date()
-            progress = .init(step: board.size, total: board.size)
-            
+
             if bestTime == nil || elapsedTime < bestTime! {
                 bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval)
             }

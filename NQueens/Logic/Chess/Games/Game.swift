@@ -6,21 +6,31 @@
 //
 
 extension Chess {
-    enum GameResult {
-        case ongoing(progress: Progress)
-        case finished
-        
-        struct Progress {
-            let step: Int
-            let total: Int
-            
-            var percentage: Double {
-                Double(step) / Double(total)
-            }
-        }
+    enum Game {}
+}
+ 
+extension Chess.Game {
+    protocol Interface {
+        func squareTapped(at index: Int, on board: inout Chess.Board) -> MoveResult
     }
     
-    protocol Game {
-        func squareTapped(at index: Int, on board: inout Board) -> GameResult
+    struct MoveResult {
+        let gameStatus: Status
+        let progress: Progress
+    }
+    
+    enum Status {
+        case normal
+        case conflicting
+        case solved
+    }
+    
+    struct Progress {
+        let step: Int
+        let total: Int
+        
+        var percentage: Double {
+            Double(step) / Double(total)
+        }
     }
 }
