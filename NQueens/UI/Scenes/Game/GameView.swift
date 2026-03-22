@@ -9,7 +9,9 @@ import SwiftUI
 
 struct GameView: View {
     @Environment(\.dismiss) private var dismiss
-    @State var viewModel: GameViewModel
+    
+    typealias ViewModel = GameViewModel<ContinuousClock>
+    @State var viewModel: ViewModel
     
     var body: some View {
         VStack(spacing: 24) {
@@ -121,7 +123,7 @@ struct GameView: View {
         .clipped()
     }
     
-    private func alert(_ alert: GameViewModel.Alert) -> Alert {
+    private func alert(_ alert: ViewModel.Alert) -> Alert {
         switch alert {
         case .resetPrompt:
             Alert(

@@ -9,21 +9,19 @@ import Foundation
 import SwiftUI
 
 @Observable
-class GameViewModel {
+class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration {
     private var bestTimeStore: BestTimeStore
+    private var clock: GameClock
 
     private(set) var board: Chess.Board
     private var game: any Chess.Game.Interface
     
     private(set) var bestTime: Duration?
-    private(set) var startTime: Date?
-    private(set) var finishTime: Date?
+    private(set) var startTime: (GameClock.Instant)?
+    private(set) var finishTime: (GameClock.Instant)?
     var elapsedTime: Duration {
         guard let startTime else { return .zero }
-        
-        let endTime = finishTime ?? Date()
-        let elapsed = endTime.timeIntervalSince(startTime)
-        return Duration.seconds(elapsed)
+        return startTime.duration(to: finishTime ?? clock.now)
     }
 
     typealias Progress = Chess.Game.Progress
@@ -46,10 +44,12 @@ class GameViewModel {
     
     init(
         bestTimeStore: BestTimeStore = .init(),
+        clock: GameClock = .continuous,
         boardSize: Int,
         game: any Chess.Game.Interface
     ) {
         self.bestTimeStore = bestTimeStore
+        self.clock = clock
         self.board = .init(size: boardSize)
         self.game = game
         
@@ -73,7 +73,7 @@ class GameViewModel {
         progress = result.progress
 
         if gameFinished {
-            finishTime = Date()
+            finishTime = clock.now
 
             var updateBestTime: Bool
             var winOverlay: WinOverlay.Style
@@ -129,25 +129,23 @@ class GameViewModel {
     
     private func startGameIfNeeded() {
         guard startTime == nil else { return }
-        startTime = Date()
+        startTime = clock.now
     }
     
     private func resetGame() {
         let result = game.reset(board: &board)
         gameStatus = result.gameStatus
         progress = result.progress
-        startTime = Date()
+        startTime = clock.now
         finishTime = nil
 
         if let bestTime = bestTimeStore.bestTime(for: board.size) {
             self.bestTime = Duration.seconds(bestTime)
         }
     }
-    
-    
 }
 
-extension GameViewModel {
+extension GameViewModel where GameClock == ContinuousClock {
     static var preview: GameViewModel {
         .init(
             bestTimeStore: BestTimeStore(context: .preview),
