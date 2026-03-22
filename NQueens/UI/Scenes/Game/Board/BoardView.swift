@@ -9,12 +9,13 @@ import SwiftUI
 
 struct BoardView: View {
     let board: Chess.Board
-    private var onSquareTap: ((_ index: Int) -> Void)?
+    var onSquareTap: ((_ index: Int) -> Void)?
     
     init(board: Chess.Board) {
         self.board = board
     }
     
+    @inlinable
     func onSquareTap(_ callback: ((_ index: Int) -> Void)?) -> Self {
         var view = self
         view.onSquareTap = callback
