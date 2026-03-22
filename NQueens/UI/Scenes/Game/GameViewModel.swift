@@ -25,6 +25,9 @@ class GameViewModel {
         return Duration.seconds(elapsed)
     }
     
+    typealias Progress = Chess.GameResult.Progress
+    var progress: Progress
+    
     var gameFinished: Bool { finishTime != nil }
     
     init(
@@ -39,6 +42,7 @@ class GameViewModel {
         if let bestTime = bestTimeStore.bestTime(for: boardSize) {
             self.bestTime = Duration.seconds(bestTime)
         }
+        self.progress = .init(step: 0, total: boardSize)
     }
     
     func startGame() {
@@ -51,10 +55,11 @@ class GameViewModel {
         
         let result = game.squareTapped(at: index, on: &board)
         switch result {
-        case .ongoing:
-            break
+        case .ongoing(let progress):
+            self.progress = progress
         case .finished:
             finishTime = Date()
+            progress = .init(step: board.size, total: board.size)
             
             if bestTime == nil || elapsedTime < bestTime! {
                 bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval)

@@ -8,10 +8,10 @@
 import Foundation
 
 struct NQueens: Chess.Game {
-    enum EvaluationResult {
-        case unsolved
-        case conflicts(indices: Set<Int>)
-        case solved
+    struct EvaluationResult {
+        let pieces: Int
+        let conflicts: Set<Int>?
+        let solved: Bool
     }
     
     func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.GameResult {
@@ -28,14 +28,16 @@ struct NQueens: Chess.Game {
         board.removeAllConflicts()
         let result = evaluateGame(on: board)
 
-        switch result {
-        case .unsolved:
-            return .ongoing
-        case .conflicts(let indices):
-            board.setConflicts(at: indices)
-            return .ongoing
-        case .solved:
+        if let conflicts = result.conflicts {
+            board.setConflicts(at: conflicts)
+        }
+
+        if result.solved {
             return .finished
+        } else {
+            return .ongoing(
+                progress: .init(step: result.pieces, total: board.size)
+            )
         }
     }
     
@@ -94,12 +96,10 @@ struct NQueens: Chess.Game {
             }
         }
         
-        if !conflictingIndices.isEmpty {
-            return .conflicts(indices: conflictingIndices)
-        } else if placedQueens < board.size {
-            return .unsolved
-        } else {
-            return .solved
-        }
+        return .init(
+            pieces: placedQueens,
+            conflicts: conflictingIndices.isEmpty ? nil : conflictingIndices,
+            solved: placedQueens == board.size && conflictingIndices.isEmpty
+        )
     }
 }

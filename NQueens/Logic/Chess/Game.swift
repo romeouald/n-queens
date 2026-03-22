@@ -7,8 +7,17 @@
 
 extension Chess {
     enum GameResult {
-        case ongoing
+        case ongoing(progress: Progress)
         case finished
+        
+        struct Progress {
+            let step: Int
+            let total: Int
+            
+            var percentage: Double {
+                Double(step) / Double(total)
+            }
+        }
     }
     
     protocol Game {
