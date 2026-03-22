@@ -24,7 +24,12 @@ struct GameView: View {
         .onAppear { viewModel.startGame() }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
-        .tint(Color.greenDark)
+        .overlay {
+            if let winOverlay = viewModel.winOverlay {
+                WinOverlay(style: winOverlay)
+                    .onDismiss { viewModel.dismissWinOverlay() }
+            }
+        }
     }
     
     private var timerView: some View {

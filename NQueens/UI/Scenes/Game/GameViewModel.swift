@@ -31,6 +31,8 @@ class GameViewModel {
     var hasError: Bool { gameStatus == .conflicting }
     var gameFinished: Bool { gameStatus == .solved }
     
+    var winOverlay: WinOverlay.Style?
+    
     init(
         bestTimeStore: BestTimeStore = .init(),
         boardSize: Int,
@@ -62,10 +64,30 @@ class GameViewModel {
         if gameFinished {
             finishTime = Date()
 
-            if bestTime == nil || elapsedTime < bestTime! {
-                bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval)
+            var updateBestTime: Bool
+            var winOverlay: WinOverlay.Style
+            
+            if bestTime == nil {
+                // first solution
+                updateBestTime = true
+                winOverlay = .first
+            } else if elapsedTime < bestTime! {
+                // new record
+                updateBestTime = true
+                winOverlay = .newRecord
+            } else {
+                // subsequent solution without best time
+                updateBestTime = false
+                winOverlay = .solved
             }
+            
+            if updateBestTime { bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval) }
+            self.winOverlay = winOverlay
         }
+    }
+    
+    func dismissWinOverlay() {
+        winOverlay = nil
     }
 }
 
