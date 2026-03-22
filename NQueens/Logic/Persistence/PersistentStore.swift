@@ -6,9 +6,10 @@
 //
 
 import SwiftData
+import os
 
 private extension ModelContainer {
-    static func make(inMemory: Bool = false) throws -> ModelContainer {
+    static func make(inMemory: Bool = false) -> ModelContainer? {
         let schema = Schema([
             BestTimeModel.self,
         ])
@@ -16,24 +17,25 @@ private extension ModelContainer {
             schema: schema,
             isStoredInMemoryOnly: inMemory
         )
-        return try ModelContainer(for: schema, configurations: config)
+        
+        do {
+            return try ModelContainer(for: schema, configurations: config)
+        } catch {
+            os.Logger(subsystem: "PersistentStore", category: "ModelContainer")
+                .error("Failed to initialize ModelContainer")
+            return nil
+        }        
     }
 }
     
 extension ModelContext {
     static var live: ModelContext? {
-        guard let container = try? ModelContainer.make() else {
-            return nil
-        }
-        
+        guard let container = ModelContainer.make() else { return nil }
         return ModelContext(container)
     }
     
     static var preview: ModelContext? {
-        guard let container = try? ModelContainer.make(inMemory: true) else {
-            return nil
-        }
-        
+        guard let container = ModelContainer.make(inMemory: true) else { return nil }
         return ModelContext(container)
     }
 }
