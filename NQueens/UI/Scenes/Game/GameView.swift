@@ -8,17 +8,24 @@
 import SwiftUI
 
 struct GameView: View {
+    @Environment(\.dismiss) private var dismiss
     @State var viewModel: GameViewModel
     
     var body: some View {
         VStack(spacing: 24) {
-            timerView
+            Spacer()
+            
+            timeBar
             BoardView(board: viewModel.board)
                 .onSquareTap { index in
                     viewModel.squareTapped(at: index)
                 }
-            progressView
+            progressBar
                 .padding(.horizontal, 24)
+            
+            Spacer()
+            
+            buttonBar
             
         }
         .onAppear { viewModel.startGame() }
@@ -30,9 +37,10 @@ struct GameView: View {
                     .onDismiss { viewModel.dismissWinOverlay() }
             }
         }
+        .navigationBarBackButtonHidden()
     }
     
-    private var timerView: some View {
+    private var timeBar: some View {
         HStack(spacing: 24) {
             if let bestTime = viewModel.bestTime {
                 StatCell(icon: Image(systemName: "trophy")) {
@@ -58,7 +66,7 @@ struct GameView: View {
         }
     }
     
-    private var progressView: some View {
+    private var progressBar: some View {
         HStack(alignment: .center, spacing: 12) {
             GeometryReader { geometry in
                 Capsule()
@@ -78,6 +86,34 @@ struct GameView: View {
                 .font(Font.system(size: 16, weight: .black))
                 .monospacedDigit()
         }
+    }
+    
+    private var buttonBar: some View {
+        HStack(spacing: 24) {
+            Button(action: { dismiss() }) {
+                Image(systemName: "chevron.left")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(8)
+                    .frame(maxWidth: .infinity)
+            }
+            Button(action: { viewModel.resetGame() }) {
+                Image(systemName: "arrow.counterclockwise")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(8)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .bold()
+        .buttonStyle(.borderless)
+        .tint(.gray)
+        .frame(height: 44)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity)
+        .background(Color.overlayDark)
+        .clipped()
     }
 }
 

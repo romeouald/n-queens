@@ -54,6 +54,9 @@ class GameViewModel {
         startTime = Date()
     }
     
+    func resetGame() {
+    }
+    
     func squareTapped(at index: Int) {
         guard !gameFinished else { return }
         
