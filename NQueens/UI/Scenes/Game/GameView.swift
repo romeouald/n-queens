@@ -28,13 +28,18 @@ struct GameView: View {
             buttonBar
             
         }
-        .onAppear { viewModel.startGame() }
+        .onAppear {
+            viewModel.viewAppeared(dismiss: dismiss)
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
+        .alert(item: $viewModel.alert) { item in
+            alert(item)
+        }
         .overlay {
             if let winOverlay = viewModel.winOverlay {
                 WinOverlay(style: winOverlay)
-                    .onDismiss { viewModel.dismissWinOverlay() }
+                    .onDismiss(viewModel.winOverlayDismissed)
             }
         }
         .navigationBarBackButtonHidden()
@@ -90,14 +95,14 @@ struct GameView: View {
     
     private var buttonBar: some View {
         HStack(spacing: 24) {
-            Button(action: { dismiss() }) {
+            Button(action: { viewModel.backButtonTapped() }) {
                 Image(systemName: "chevron.left")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding(8)
                     .frame(maxWidth: .infinity)
             }
-            Button(action: { viewModel.resetGame() }) {
+            Button(action: { viewModel.resetButtonTapped() }) {
                 Image(systemName: "arrow.counterclockwise")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -114,6 +119,29 @@ struct GameView: View {
         .frame(maxWidth: .infinity)
         .background(Color.overlayDark)
         .clipped()
+    }
+    
+    private func alert(_ alert: GameViewModel.Alert) -> Alert {
+        switch alert {
+        case .resetPrompt:
+            Alert(
+                title: Text("Are you sure you want reset the game?"),
+                message: Text("All current progress will be lost."),
+                primaryButton: .destructive(Text("Reset")) {
+                    viewModel.resetPromptConfirmButtonTapped()
+                },
+                secondaryButton: .cancel(Text("Cancel"))
+            )
+        case .leavePrompt:
+            Alert(
+                title: Text("Are you sure you want to exit the game?"),
+                message: Text("All current progress will be lost."),
+                primaryButton: .destructive(Text("Leave")) {
+                    viewModel.leavePromptConfimButtonTapped()
+                },
+                secondaryButton: .cancel(Text("Stay"))
+            )
+        }
     }
 }
 

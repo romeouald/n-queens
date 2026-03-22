@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @Observable
 class GameViewModel {
@@ -28,10 +29,20 @@ class GameViewModel {
     typealias Progress = Chess.Game.Progress
     private(set) var progress: Progress
     private var gameStatus: Chess.Game.Status
+    var isGameInProgress: Bool { progress.step > 0 && !gameFinished }
     var hasError: Bool { gameStatus == .conflicting }
     var gameFinished: Bool { gameStatus == .solved }
     
     var winOverlay: WinOverlay.Style?
+    
+    enum Alert: Identifiable {
+        var id: Self { self }
+        case resetPrompt
+        case leavePrompt
+    }
+    var alert: Alert?
+    
+    var dismiss: DismissAction?
     
     init(
         bestTimeStore: BestTimeStore = .init(),
@@ -49,21 +60,9 @@ class GameViewModel {
         self.gameStatus = .normal
     }
     
-    func startGame() {
-        guard startTime == nil else { return }
-        startTime = Date()
-    }
-    
-    func resetGame() {
-        let result = game.reset(board: &board)
-        gameStatus = result.gameStatus
-        progress = result.progress
-        startTime = Date()
-        finishTime = nil
-
-        if let bestTime = bestTimeStore.bestTime(for: board.size) {
-            self.bestTime = Duration.seconds(bestTime)
-        }
+    func viewAppeared(dismiss: DismissAction) {
+        self.dismiss = dismiss
+        self.startGameIfNeeded()
     }
     
     func squareTapped(at index: Int) {
@@ -98,9 +97,54 @@ class GameViewModel {
         }
     }
     
-    func dismissWinOverlay() {
+    func backButtonTapped() {
+        guard !isGameInProgress else {
+            alert = .leavePrompt
+            return
+        }
+        
+        dismiss?()
+    }
+    
+    func resetButtonTapped() {
+        guard !isGameInProgress else {
+            alert = .resetPrompt
+            return
+        }
+        
+        resetGame()
+    }
+
+    func leavePromptConfimButtonTapped() {
+        dismiss?()
+    }
+    
+    func resetPromptConfirmButtonTapped() {
+        resetGame()
+    }
+    
+    func winOverlayDismissed() {
         winOverlay = nil
     }
+    
+    private func startGameIfNeeded() {
+        guard startTime == nil else { return }
+        startTime = Date()
+    }
+    
+    private func resetGame() {
+        let result = game.reset(board: &board)
+        gameStatus = result.gameStatus
+        progress = result.progress
+        startTime = Date()
+        finishTime = nil
+
+        if let bestTime = bestTimeStore.bestTime(for: board.size) {
+            self.bestTime = Duration.seconds(bestTime)
+        }
+    }
+    
+    
 }
 
 extension GameViewModel {
