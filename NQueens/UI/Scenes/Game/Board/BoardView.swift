@@ -114,10 +114,61 @@ private extension Chess.Piece {
 }
 
 
-#Preview {
-    NavigationStack {
-        BoardView(
-            board: .init(size: 8)
-        )
+#Preview("64: Empty") {
+    BoardView(board: .s8empty)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.background)
+}
+
+#Preview("64: 2Q") {
+    BoardView(board: .s8queens2)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.background)
+}
+
+#Preview("16: Empty") {
+    BoardView(board: .s4empty)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.background)
+}
+
+#Preview("16: 4Q") {
+    BoardView(board: .s4queens4)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.background)
+}
+
+#Preview("16: 4QC") {
+    BoardView(board: .s4queens4conflict)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.background)
+}
+
+private extension Chess.Board {
+    static var s8empty: Self { Chess.Board(size: 8) }
+    static var s8queens2: Self {
+        var board = Chess.Board(size: 8)
+        board.setPiece(.init(figure: .queen, color: .light), at: 3)
+        board.setPiece(.init(figure: .queen, color: .dark), at: 59)
+        return board
+    }
+    
+    static var s4empty: Self { Chess.Board(size: 4) }
+    static var s4queens4: Self {
+        var board = Chess.Board(size: 4)
+        board.setPiece(.init(figure: .queen, color: .light), at: 1)
+        board.setPiece(.init(figure: .queen, color: .light), at: 7)
+        board.setPiece(.init(figure: .queen, color: .light), at: 8)
+        board.setPiece(.init(figure: .queen, color: .light), at: 14)
+        return board
+    }
+    static var s4queens4conflict: Self {
+        var board = Chess.Board(size: 4)
+        board.setPiece(.init(figure: .queen, color: .light), at: 1)
+        board.setPiece(.init(figure: .queen, color: .light), at: 7)
+        board.setPiece(.init(figure: .queen, color: .light), at: 8)
+        board.setPiece(.init(figure: .queen, color: .light), at: 10)
+        board.setConflicts(at: [7, 8, 10])
+        return board
     }
 }
