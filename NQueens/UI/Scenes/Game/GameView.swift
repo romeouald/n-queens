@@ -44,6 +44,8 @@ struct GameView: View {
                     .onDismiss(viewModel.winOverlayDismissed)
             }
         }
+        .feedback(viewModel.feedback)
+        .environment(\.soundEffectPlayer, SoundEffectPlayer(preload: true))
         .navigationBarBackButtonHidden()
     }
     
