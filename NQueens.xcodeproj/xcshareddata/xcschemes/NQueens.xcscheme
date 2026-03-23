@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C45568E2F6B0FD90028C416"
+               BlueprintIdentifier = "3C94CFF92F71381200EF61E9"
                BuildableName = "NQueens.app"
                BlueprintName = "NQueens"
                ReferencedContainer = "container:NQueens.xcodeproj">
@@ -40,7 +40,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C45569D2F6B0FDB0028C416"
+               BlueprintIdentifier = "3C94D0062F71381300EF61E9"
                BuildableName = "NQueensTests.xctest"
                BlueprintName = "NQueensTests"
                ReferencedContainer = "container:NQueens.xcodeproj">
@@ -51,7 +51,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C4556A72F6B0FDB0028C416"
+               BlueprintIdentifier = "3C94D0102F71381300EF61E9"
                BuildableName = "NQueensUITests.xctest"
                BlueprintName = "NQueensUITests"
                ReferencedContainer = "container:NQueens.xcodeproj">
@@ -73,7 +73,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C45568E2F6B0FD90028C416"
+            BlueprintIdentifier = "3C94CFF92F71381200EF61E9"
             BuildableName = "NQueens.app"
             BlueprintName = "NQueens"
             ReferencedContainer = "container:NQueens.xcodeproj">
@@ -90,7 +90,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3C45568E2F6B0FD90028C416"
+            BlueprintIdentifier = "3C94CFF92F71381200EF61E9"
             BuildableName = "NQueens.app"
             BlueprintName = "NQueens"
             ReferencedContainer = "container:NQueens.xcodeproj">
