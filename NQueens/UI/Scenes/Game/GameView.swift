@@ -31,7 +31,7 @@ struct GameView: View {
             
         }
         .onAppear {
-            viewModel.viewAppeared(dismiss: dismiss)
+            viewModel.viewAppeared(dismiss: { dismiss() })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)

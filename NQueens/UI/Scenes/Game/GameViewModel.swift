@@ -40,7 +40,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     }
     var alert: Alert?
     
-    var dismiss: DismissAction?
+    var dismiss: (() -> Void)?
     
     init(
         bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live),
@@ -60,7 +60,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
         self.gameStatus = .normal
     }
     
-    func viewAppeared(dismiss: DismissAction) {
+    func viewAppeared(dismiss: @escaping (() -> Void)) {
         self.dismiss = dismiss
         self.startGameIfNeeded()
     }
