@@ -18,7 +18,7 @@ struct ConfigurationView: View {
             Form {
                 Section {
                     Picker("Board size", selection: $viewModel.boardSize) {
-                        ForEach(4 ... 20, id: \.self) { i in
+                        ForEach(4 ... 16, id: \.self) { i in
                             Text("\(i)x\(i)").tag(i)
                         }
                     }
@@ -45,7 +45,7 @@ struct ConfigurationView: View {
                 Section {
                     Button(action: { viewModel.startButtonTapped() }) {
                         Text("START GAME")
-                            .font(.default.weight(.heavy))
+                            .font(.system(size: 16, weight: .heavy))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)

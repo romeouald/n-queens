@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 @Observable
-class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration {
+final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration {
     private var bestTimeStore: any BestTimeStoring
     private var clock: GameClock
 

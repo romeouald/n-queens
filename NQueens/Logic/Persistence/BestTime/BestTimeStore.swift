@@ -13,7 +13,7 @@ protocol BestTimeStoring {
     func saveBestTime(boardSize: Int, time: TimeInterval)
 }
 
-class BestTimeStore: BestTimeStoring {
+final class BestTimeStore: BestTimeStoring {
     private var context: ModelContext?
     
     init(context: ModelContext?) {

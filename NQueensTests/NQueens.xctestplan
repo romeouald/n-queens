@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "1A53C70C-301C-4F25-8A00-755E34DC2FF7",
+      "name" : "Configuration",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverageBuildableInfos" : [
+      {
+        "buildableIdentifier" : "primary",
+        "containerPath" : "container:NQueens.xcodeproj",
+        "identifier" : "3C45569D2F6B0FDB0028C416",
+        "name" : "NQueens"
+      }
+    ],
+    "codeCoverageEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:NQueens.xcodeproj",
+        "identifier" : "3C45569D2F6B0FDB0028C416",
+        "name" : "NQueensTests"
+      }
+    }
+  ],
+  "version" : 1
+}
