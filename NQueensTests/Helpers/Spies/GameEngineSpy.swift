@@ -1,5 +1,5 @@
 //
-//  GameSpy.swift
+//  GameEngineSpy.swift
 //  NQueens
 //
 //  Created by Romuald Szauer on 23/3/26.
@@ -8,15 +8,15 @@
 @testable import NQueens
 import Foundation
 
-final class GameSpy: Chess.Game.Interface {
-    private(set) var squareTappedCallCount = 0
-    private(set) var squareTappedIndices: [Int] = []
-    var squareTappedStub: Chess.Game.MoveResult = .stub()
+final class GameEngineSpy: Chess.Game.Engine {
+    private(set) var toggleSquareCallCount = 0
+    private(set) var toggleSquareIndices: [Int] = []
+    var toggleSquareStub: Chess.Game.MoveResult = .stub()
 
-    func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
-        squareTappedCallCount += 1
-        squareTappedIndices.append(index)
-        return squareTappedStub
+    func toggleSquare(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
+        toggleSquareCallCount += 1
+        toggleSquareIndices.append(index)
+        return toggleSquareStub
     }
 
     private(set) var resetCallCount = 0

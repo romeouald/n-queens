@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct NQueens: Chess.Game.Interface {
-    func squareTapped(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
+struct NQueens: Chess.Game.Engine {
+    func toggleSquare(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
         let square = board.squares[index]
         
         if square.piece == nil {

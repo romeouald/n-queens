@@ -10,8 +10,8 @@ extension Chess {
 }
  
 extension Chess.Game {
-    protocol Interface {
-        func squareTapped(at index: Int, on board: inout Chess.Board) -> MoveResult
+    protocol Engine {
+        func toggleSquare(at index: Int, on board: inout Chess.Board) -> MoveResult
         func reset(board: inout Chess.Board) -> MoveResult
     }
     

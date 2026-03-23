@@ -14,7 +14,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     private var clock: GameClock
 
     private(set) var board: Chess.Board
-    private var game: any Chess.Game.Interface
+    private var game: any Chess.Game.Engine
     
     private(set) var bestTime: Duration?
     private(set) var startTime: (GameClock.Instant)?
@@ -46,7 +46,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
         bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live),
         clock: GameClock = .continuous,
         boardSize: Int,
-        game: any Chess.Game.Interface
+        game: any Chess.Game.Engine
     ) {
         self.bestTimeStore = bestTimeStore
         self.clock = clock
@@ -68,7 +68,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     func squareTapped(at index: Int) {
         guard !gameFinished else { return }
         
-        let result = game.squareTapped(at: index, on: &board)
+        let result = game.toggleSquare(at: index, on: &board)
         gameStatus = result.gameStatus
         progress = result.progress
 
