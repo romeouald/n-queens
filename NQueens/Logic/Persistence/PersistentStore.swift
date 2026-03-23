@@ -38,4 +38,9 @@ extension ModelContext {
         guard let container = ModelContainer.make(inMemory: true) else { return nil }
         return ModelContext(container)
     }
+    
+    static var test: ModelContext? {
+        guard let container = ModelContainer.make(inMemory: true) else { return nil }
+        return ModelContext(container)
+    }
 }
