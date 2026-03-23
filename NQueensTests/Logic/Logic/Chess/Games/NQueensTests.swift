@@ -12,11 +12,10 @@ import Foundation
 @Suite("NQueens")
 @MainActor
 struct NQueensTests {
-    let game = NQueens()
 
-    // MARK: - squareTapped: placing a queen
+    // MARK: - toggleSquare: placing a queen
 
-    @Suite("squareTapped: placing a queen")
+    @Suite("toggleSquare: placing a queen")
     @MainActor
     struct PlacingAQueen {
         var game = NQueens()
@@ -33,14 +32,50 @@ struct NQueensTests {
             #expect(board.squares[0].piece?.color == .light)
         }
 
+        @Test func returnsMovePlace() {
+            var board = Chess.Board(size: 4)
+            let result = game.toggleSquare(at: 0, on: &board)
+            if case .place = result.move { } else {
+                Issue.record("Expected .place move, got \(result.move)")
+            }
+        }
+
+        @Test func returnsPlaceConflictingFalseWhenNoConflict() {
+            var board = Chess.Board(size: 4)
+            let result = game.toggleSquare(at: 0, on: &board)
+            if case .place(let conflicting) = result.move {
+                #expect(!conflicting)
+            } else {
+                Issue.record("Expected .place move, got \(result.move)")
+            }
+        }
+
+        @Test func returnsPlaceConflictingTrueWhenPlacedInConflict() {
+            var board = Chess.Board(size: 4)
+            _ = game.toggleSquare(at: 0, on: &board) // row 0, col 0
+            let result = game.toggleSquare(at: 1, on: &board) // row 0, col 1 — conflict
+            if case .place(let conflicting) = result.move {
+                #expect(conflicting)
+            } else {
+                Issue.record("Expected .place move, got \(result.move)")
+            }
+        }
+
         @Test func doesNotPlaceQueenWhenBoardIsFull() {
             var board = Chess.Board(size: 4)
-            // Place 4 queens (board size limit)
             [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
-            // Attempt to place a 5th
             _ = game.toggleSquare(at: 1, on: &board)
             let queenCount = board.squares.filter { $0.piece?.type == .queen }.count
             #expect(queenCount == 4)
+        }
+
+        @Test func returnsInvalidMoveWhenBoardIsFull() {
+            var board = Chess.Board(size: 4)
+            [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
+            let result = game.toggleSquare(at: 1, on: &board)
+            if case .invalid = result.move { } else {
+                Issue.record("Expected .invalid move, got \(result.move)")
+            }
         }
 
         @Test func doesNotPlaceQueenBeyondBoardSize() {
@@ -52,9 +87,9 @@ struct NQueensTests {
         }
     }
 
-    // MARK: - squareTapped: removing a queen
+    // MARK: - toggleSquare: removing a queen
 
-    @Suite("squareTapped: removing a queen")
+    @Suite("toggleSquare: removing a queen")
     @MainActor
     struct RemovingAQueen {
         var game = NQueens()
@@ -66,6 +101,15 @@ struct NQueensTests {
             #expect(board.squares[0].piece == nil)
         }
 
+        @Test func returnsMoveRemove() {
+            var board = Chess.Board(size: 4)
+            _ = game.toggleSquare(at: 0, on: &board)
+            let result = game.toggleSquare(at: 0, on: &board)
+            if case .remove = result.move { } else {
+                Issue.record("Expected .remove move, got \(result.move)")
+            }
+        }
+
         @Test func allowsPlacingNewQueenAfterRemoval() {
             var board = Chess.Board(size: 4)
             [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
@@ -75,9 +119,9 @@ struct NQueensTests {
         }
     }
 
-    // MARK: - squareTapped: progress
+    // MARK: - toggleSquare: progress
 
-    @Suite("squareTapped: progress")
+    @Suite("toggleSquare: progress")
     @MainActor
     struct Progress {
         var game = NQueens()
@@ -98,21 +142,28 @@ struct NQueensTests {
             var board = Chess.Board(size: 4)
             _ = game.toggleSquare(at: 0, on: &board)
             _ = game.toggleSquare(at: 5, on: &board)
-            let result = game.toggleSquare(at: 0, on: &board) // remove
+            let result = game.toggleSquare(at: 0, on: &board)
             #expect(result.progress.step == 1)
         }
 
         @Test func progressStepIsZeroOnEmptyBoard() {
             var board = Chess.Board(size: 4)
-            _ = game.toggleSquare(at: 0, on: &board) // add
-            let result = game.toggleSquare(at: 0, on: &board) // remove
+            _ = game.toggleSquare(at: 0, on: &board)
+            let result = game.toggleSquare(at: 0, on: &board)
             #expect(result.progress.step == 0)
+        }
+
+        @Test func progressUnchangedOnInvalidMove() {
+            var board = Chess.Board(size: 4)
+            [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
+            let result = game.toggleSquare(at: 1, on: &board) // invalid
+            #expect(result.progress.step == 4)
         }
     }
 
-    // MARK: - squareTapped: game status
+    // MARK: - toggleSquare: game status
 
-    @Suite("squareTapped: game status")
+    @Suite("toggleSquare: game status")
     @MainActor
     struct GameStatus {
         var game = NQueens()
@@ -175,14 +226,14 @@ struct NQueensTests {
             var board = Chess.Board(size: 4)
             _ = game.toggleSquare(at: 0, on: &board)
             _ = game.toggleSquare(at: 1, on: &board) // conflict
-            let result = game.toggleSquare(at: 1, on: &board) // remove conflicting queen
+            let result = game.toggleSquare(at: 1, on: &board) // remove
             #expect(result.gameStatus == .normal)
         }
     }
 
-    // MARK: - squareTapped: conflicts on board
+    // MARK: - toggleSquare: conflicts on board
 
-    @Suite("squareTapped: conflicts on board")
+    @Suite("toggleSquare: conflicts on board")
     @MainActor
     struct Conflicts {
         var game = NQueens()
@@ -210,6 +261,16 @@ struct NQueensTests {
             _ = game.toggleSquare(at: 1, on: &board) // remove
             #expect(board.squares.allSatisfy { !$0.hasConflict })
         }
+
+        @Test func conflictsAreRecalculatedOnEachToggle() {
+            var board = Chess.Board(size: 4)
+            _ = game.toggleSquare(at: 0, on: &board)  // row 0, col 0
+            _ = game.toggleSquare(at: 7, on: &board)  // row 1, col 3 — no conflict with 0
+            _ = game.toggleSquare(at: 1, on: &board)  // row 0, col 1 — now 0 and 1 conflict (same row)
+            #expect(board.squares[0].hasConflict)
+            #expect(board.squares[1].hasConflict)
+            #expect(!board.squares[7].hasConflict)
+        }
     }
 
     // MARK: - reset
@@ -233,6 +294,14 @@ struct NQueensTests {
             _ = game.toggleSquare(at: 1, on: &board) // create conflict
             _ = game.reset(board: &board)
             #expect(board.squares.allSatisfy { !$0.hasConflict })
+        }
+
+        @Test func returnsResetMove() {
+            var board = Chess.Board(size: 4)
+            let result = game.reset(board: &board)
+            if case .reset = result.move { } else {
+                Issue.record("Expected .reset move, got \(result.move)")
+            }
         }
 
         @Test func returnsNormalStatus() {
@@ -269,7 +338,7 @@ struct NQueensTests {
     @Suite("performance")
     @MainActor
     struct Performance {
-        // Measures the cost of a single squareTapped call on a fully populated 64x64 board,
+        // Measures the cost of a single toggleSquare call on a fully populated 64x64 board,
         // which forces a full conflict re-evaluation pass across all 4096 squares.
         //
         // The test runs 100 passes and expects the total under 0.5s, meaning each individual
@@ -286,15 +355,17 @@ struct NQueensTests {
 
             // Place 64 queens at random positions (one per row to ensure count = board size)
             let indices = (0..<64).map { $0 * 64 + Int.random(in: 0..<64, using: &rng) }
-            indices.forEach { _ = game.toggleSquare(at: $0, on: &board) }
-            
+            // indices.forEach { _ = game.toggleSquare(at: $0, on: &board) }
+            indices.forEach { board.setPiece(.init(type: .queen, color: .light), at: $0) }
+
             let clock = ContinuousClock()
             let elapsed = clock.measure {
                 for _ in 0..<100 {
                     _ = game.toggleSquare(at: indices[0], on: &board)
                 }
             }
-            
+
+            print("elapsed: \(elapsed)")
             #expect(elapsed < .seconds(0.5))
         }
     }
