@@ -18,38 +18,38 @@ struct GameViewModelTests {
     @Suite("initial state")
     @MainActor
     struct InitialState {
-        let clock = TestClock()
         let store = BestTimeStoreSpy()
+        let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func boardSizeMatchesInput() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(vm.board.size == 4)
         }
 
         @Test func progressStartsAtZero() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(vm.progress.step == 0)
             #expect(vm.progress.total == 4)
         }
 
         @Test func gameIsNotFinishedOnInit() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(!vm.gameFinished)
         }
 
         @Test func hasNoErrorOnInit() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(!vm.hasError)
         }
 
         @Test func isNotInProgressOnInit() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(!vm.isGameInProgress)
         }
 
         @Test func elapsedTimeIsZeroBeforeStart() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(vm.elapsedTime == .zero)
         }
 
@@ -70,18 +70,19 @@ struct GameViewModelTests {
     @Suite("viewAppeared")
     @MainActor
     struct ViewAppeared {
+        let store = BestTimeStoreSpy()
         let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func setsStartTime() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(vm.startTime == nil)
             vm.viewAppeared(dismiss: {})
             #expect(vm.startTime != nil)
         }
 
         @Test func doesNotOverwriteStartTimeOnSecondCall() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: {})
             let firstStartTime = vm.startTime
             clock.advance(by: .seconds(5))
@@ -91,7 +92,7 @@ struct GameViewModelTests {
 
         @Test func setsDismissAction() {
             var dismissed = false
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: { dismissed = true })
             vm.leavePromptConfimButtonTapped()
             #expect(dismissed)
@@ -103,32 +104,33 @@ struct GameViewModelTests {
     @Suite("squareTapped")
     @MainActor
     struct SquareTapped {
+        let store = BestTimeStoreSpy()
         let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func forwardsIndexToGame() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 5)
             #expect(game.toggleSquareIndices == [5])
         }
 
         @Test func updatesProgressFromResult() {
             game.toggleSquareStub = .stub(status: .normal, step: 2, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             #expect(vm.progress.step == 2)
         }
 
         @Test func setsHasErrorWhenConflicting() {
             game.toggleSquareStub = .stub(status: .conflicting)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             #expect(vm.hasError)
         }
 
         @Test func doesNothingWhenGameAlreadyFinished() {
             game.toggleSquareStub = .stub(status: .solved, step: 4, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             vm.squareTapped(at: 1)
             #expect(game.toggleSquareCallCount == 1)
@@ -136,7 +138,7 @@ struct GameViewModelTests {
 
         @Test func isGameInProgressWhenStepAboveZeroAndNotFinished() {
             game.toggleSquareStub = .stub(status: .normal, step: 1, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             #expect(vm.isGameInProgress)
         }
@@ -147,13 +149,13 @@ struct GameViewModelTests {
     @Suite("squareTapped: game finished")
     @MainActor
     struct SquareTappedFinished {
-        let clock = TestClock()
         let store = BestTimeStoreSpy()
+        let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func setsFinishTime() {
             game.toggleSquareStub = .stub(status: .solved, step: 4, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: {})
             vm.squareTapped(at: 0)
             #expect(vm.finishTime != nil)
@@ -222,8 +224,8 @@ struct GameViewModelTests {
     @Suite("winOverlayDismissed")
     @MainActor
     struct WinOverlayDismissed {
-        let clock = TestClock()
         let store = BestTimeStoreSpy()
+        let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func clearsWinOverlay() {
@@ -242,26 +244,27 @@ struct GameViewModelTests {
     @Suite("backButtonTapped")
     @MainActor
     struct BackButtonTapped {
+        let store = BestTimeStoreSpy()
         let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func setsLeavePromptAlertWhenGameInProgress() {
             game.toggleSquareStub = .stub(status: .normal, step: 1, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             vm.backButtonTapped()
             #expect(vm.alert == .leavePrompt)
         }
 
         @Test func doesNotSetAlertWhenGameNotInProgress() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.backButtonTapped()
             #expect(vm.alert == nil)
         }
 
         @Test func callsDismissWhenGameNotInProgress() {
             var dismissed = false
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: { dismissed = true })
             vm.backButtonTapped()
             #expect(dismissed)
@@ -273,12 +276,13 @@ struct GameViewModelTests {
     @Suite("leavePromptConfirmButtonTapped")
     @MainActor
     struct LeavePromptConfirmed {
+        let store = BestTimeStoreSpy()
         let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func callsDismiss() {
             var dismissed = false
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: { dismissed = true })
             vm.leavePromptConfimButtonTapped()
             #expect(dismissed)
@@ -290,25 +294,26 @@ struct GameViewModelTests {
     @Suite("resetButtonTapped")
     @MainActor
     struct ResetButtonTapped {
+        let store = BestTimeStoreSpy()
         let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func setsResetPromptAlertWhenGameInProgress() {
             game.toggleSquareStub = .stub(status: .normal, step: 1, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             vm.resetButtonTapped()
             #expect(vm.alert == .resetPrompt)
         }
 
         @Test func doesNotSetAlertWhenGameNotInProgress() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.resetButtonTapped()
             #expect(vm.alert == nil)
         }
 
         @Test func resetsGameWhenNotInProgress() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.resetButtonTapped()
             #expect(game.resetCallCount == 1)
         }
@@ -319,14 +324,14 @@ struct GameViewModelTests {
     @Suite("resetPromptConfirmButtonTapped")
     @MainActor
     struct ResetPromptConfirmed {
-        let clock = TestClock()
         let store = BestTimeStoreSpy()
+        let clock = TestClock()
         let game = GameEngineSpy()
 
         @Test func resetsProgress() {
             game.toggleSquareStub = .stub(status: .normal, step: 2, total: 4)
             game.resetStub = .stub(status: .normal, step: 0, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.squareTapped(at: 0)
             vm.resetPromptConfirmButtonTapped()
             #expect(vm.progress.step == 0)
@@ -343,7 +348,7 @@ struct GameViewModelTests {
 
         @Test func resetsStartTime() {
             game.toggleSquareStub = .stub(status: .normal, step: 1, total: 4)
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.viewAppeared(dismiss: {})
             vm.squareTapped(at: 0)
             let firstStartTime = vm.startTime
@@ -361,7 +366,7 @@ struct GameViewModelTests {
         }
 
         @Test func callsResetOnGame() {
-            let vm = GameViewModel(clock: clock, boardSize: 4, game: game)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.resetPromptConfirmButtonTapped()
             #expect(game.resetCallCount == 1)
         }
