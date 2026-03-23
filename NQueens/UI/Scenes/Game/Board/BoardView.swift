@@ -47,7 +47,7 @@ struct BoardView: View {
                             .padding(padding)
                     }
 
-                    // Column labels (aplha)
+                    // Column labels (alpha)
                     if row == 0 {
                         Text("\(column.formatted(.alpha))")
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
