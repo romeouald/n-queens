@@ -135,7 +135,6 @@ struct WinOverlay: View {
         }
     }
     
-    @inlinable
     func onDismiss(_ onDismiss: @escaping (() -> Void)) -> some View {
         var view = self
         view.onDismiss = onDismiss

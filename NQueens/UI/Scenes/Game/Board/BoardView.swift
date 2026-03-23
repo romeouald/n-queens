@@ -15,7 +15,6 @@ struct BoardView: View {
         self.board = board
     }
     
-    @inlinable
     func onSquareTap(_ callback: ((_ index: Int) -> Void)?) -> Self {
         var view = self
         view.onSquareTap = callback
@@ -80,44 +79,6 @@ struct BoardView: View {
             .font(font)
         }
         .aspectRatio(1, contentMode: .fit)
-    }
-    
-    private func square(
-        color: Chess.Color,
-        hasConflict: Bool,
-        piece: Chess.Piece?,
-        font: Font,
-        padding: CGFloat,
-        rowLabel: String?,
-        columnLabel: String?
-    ) -> some View {
-        ZStack {
-            Rectangle().fill(color.squareColor)
-            
-            if let rowLabel {
-                Text("\(rowLabel)")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(padding)
-            }
-
-            if let columnLabel {
-                Text("\(columnLabel)")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                    .padding(.trailing, padding)
-                    .padding(.bottom, padding / 2)
-            }
-            
-            if hasConflict {
-                Rectangle().fill(Color.overlayError)
-            }
-            
-            if let piece {
-                Image(piece.image)
-                    .resizable()
-            }
-        }
-        .font(font)
-        .foregroundStyle(color.labelColor)
     }
 }
 
