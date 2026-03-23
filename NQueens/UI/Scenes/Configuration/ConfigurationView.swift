@@ -28,12 +28,7 @@ struct ConfigurationView: View {
                         Text("Best time:")
                         
                         if let bestTime = viewModel.bestTime {
-                            Text(bestTime.formatted(
-                                .time(pattern: .minuteSecond(
-                                    padMinuteToLength: 2,
-                                    fractionalSecondsLength: 1
-                                ))
-                            ))
+                            Text(bestTime.formatted(.gameTime))
                         } else {
                             Text("none")
                                 .italic()
