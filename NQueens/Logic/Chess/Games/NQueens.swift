@@ -11,11 +11,11 @@ struct NQueens: Chess.Game.Engine {
     func toggleSquare(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
         let square = board.squares[index]
         
-        let move: Chess.Game.Move
+        var move: Chess.Game.Move
         if square.piece == nil {
             if canPlacePiece(on: board) {
                 board.setPiece(.init(type: .queen, color: .light), at: index)
-                move = .place
+                move = .place(conflicting: false)
             } else {
                 move = .invalid
             }
@@ -24,7 +24,26 @@ struct NQueens: Chess.Game.Engine {
             move = .remove
         }
         
-        return evaluate(board: &board, after: move)
+        let result = evaluate(board: board)
+        
+        board.setConflicts(at: result.conflicts)
+
+        if case .place = move, result.conflicts.contains(index) {
+            move = .place(conflicting: true)
+        }
+        
+        var gameStatus: Chess.Game.Status = .normal
+        if !result.conflicts.isEmpty {
+            gameStatus = .conflicting
+        } else if result.numberOfQueens == board.size {
+            gameStatus = .solved
+        }
+        
+        return .init(
+            move: move,
+            gameStatus: gameStatus,
+            progress: .init(step: result.numberOfQueens, total: board.size)
+        )
     }
     
     func reset(board: inout Chess.Board) -> Chess.Game.MoveResult {
@@ -47,7 +66,12 @@ struct NQueens: Chess.Game.Engine {
             .count
     }
     
-    private func evaluate(board: inout Chess.Board, after move: Chess.Game.Move) -> Chess.Game.MoveResult {
+    private struct EvaluationResult {
+        let conflicts: Set<Int>
+        let numberOfQueens: Int
+    }
+    
+    private func evaluate(board: Chess.Board) -> EvaluationResult {
         var conflictingIndices: Set<Int> = []
         var queenCount = 0
         
@@ -94,19 +118,9 @@ struct NQueens: Chess.Game.Engine {
             }
         }
 
-        board.setConflicts(at: conflictingIndices)
-
-        var gameStatus: Chess.Game.Status = .normal
-        if !conflictingIndices.isEmpty {
-            gameStatus = .conflicting
-        } else if queenCount == board.size {
-            gameStatus = .solved
-        }
-        
         return .init(
-            move: move,
-            gameStatus: gameStatus,
-            progress: .init(step: queenCount, total: board.size)
+            conflicts: conflictingIndices,
+            numberOfQueens: queenCount
         )
     }
 }

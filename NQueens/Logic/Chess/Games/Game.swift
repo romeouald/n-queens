@@ -22,7 +22,7 @@ extension Chess.Game {
     }
     
     enum Move {
-        case place
+        case place(conflicting: Bool)
         case remove
         case invalid
         case reset
