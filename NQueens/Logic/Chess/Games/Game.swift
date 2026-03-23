@@ -16,8 +16,16 @@ extension Chess.Game {
     }
     
     struct MoveResult {
+        let move: Move
         let gameStatus: Status
         let progress: Progress
+    }
+    
+    enum Move {
+        case place
+        case remove
+        case invalid
+        case reset
     }
     
     enum Status {

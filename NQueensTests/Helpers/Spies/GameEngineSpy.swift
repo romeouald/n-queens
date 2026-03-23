@@ -30,10 +30,15 @@ final class GameEngineSpy: Chess.Game.Engine {
 
 extension Chess.Game.MoveResult {
     static func stub(
+        move: Chess.Game.Move = .reset,
         status: Chess.Game.Status = .normal,
         step: Int = 0,
         total: Int = 4
     ) -> Self {
-        .init(gameStatus: status, progress: .init(step: step, total: total))
+        .init(
+            move: move,
+            gameStatus: status,
+            progress: .init(step: step, total: total)
+        )
     }
 }

@@ -11,15 +11,20 @@ struct NQueens: Chess.Game.Engine {
     func toggleSquare(at index: Int, on board: inout Chess.Board) -> Chess.Game.MoveResult {
         let square = board.squares[index]
         
+        let move: Chess.Game.Move
         if square.piece == nil {
             if canPlacePiece(on: board) {
                 board.setPiece(.init(type: .queen, color: .light), at: index)
+                move = .place
+            } else {
+                move = .invalid
             }
         } else {
             board.removePiece(at: index)
+            move = .remove
         }
         
-        return evaluateGame(on: &board)
+        return evaluate(board: &board, after: move)
     }
     
     func reset(board: inout Chess.Board) -> Chess.Game.MoveResult {
@@ -27,20 +32,23 @@ struct NQueens: Chess.Game.Engine {
         board.removeAllPieces()
         
         return .init(
+            move: .reset,
             gameStatus: .normal,
             progress: .init(step: 0, total: board.size)
         )
     }
     
     private func canPlacePiece(on board: Chess.Board) -> Bool {
-        let numberOfQueens = board.squares
-            .filter { $0.piece?.type == .queen }
-            .count
-        
-        return numberOfQueens < board.size
+        return numberOfQueens(on: board) < board.size
     }
     
-    private func evaluateGame(on board: inout Chess.Board) -> Chess.Game.MoveResult {
+    private func numberOfQueens(on board: Chess.Board) -> Int {
+        board.squares
+            .filter { $0.piece?.type == .queen }
+            .count
+    }
+    
+    private func evaluate(board: inout Chess.Board, after move: Chess.Game.Move) -> Chess.Game.MoveResult {
         board.removeAllConflicts()
         var conflictingIndices: Set<Int> = []
         var queenCount = 0
@@ -97,6 +105,7 @@ struct NQueens: Chess.Game.Engine {
         }
         
         return .init(
+            move: move,
             gameStatus: gameStatus,
             progress: .init(step: queenCount, total: board.size)
         )
