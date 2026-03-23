@@ -162,32 +162,14 @@ struct ChessBoardTests {
         }
     }
 
-    // MARK: - removeAllPieces
-
-    @Suite("removeAllPieces")
-    @MainActor
-    struct RemoveAllPieces {
-        @Test func removesAllPlacedPieces() {
-            var board = Chess.Board(size: 4)
-            board.setPiece(.lightQueen, at: 0)
-            board.setPiece(.lightQueen, at: 5)
-            board.setPiece(.lightQueen, at: 10)
-            board.removeAllPieces()
-            #expect(board.squares.allSatisfy { $0.piece == nil })
-        }
-
-        @Test func callingOnEmptyBoardDoesNotCrash() {
-            var board = Chess.Board(size: 4)
-            board.removeAllPieces()
-            #expect(board.squares.allSatisfy { $0.piece == nil })
-        }
-    }
-
     // MARK: - setConflicts
 
     @Suite("setConflicts")
     @MainActor
     struct SetConflicts {
+        
+        // MARK: - Default behavior (merge: false)
+        
         @Test func setsConflictAtGivenIndices() {
             var board = Chess.Board(size: 4)
             board.setConflicts(at: [0, 3, 7])
@@ -195,20 +177,20 @@ struct ChessBoardTests {
             #expect(board.squares[3].hasConflict)
             #expect(board.squares[7].hasConflict)
         }
-
+        
         @Test func doesNotSetConflictOnOtherSquares() {
             var board = Chess.Board(size: 4)
             board.setConflicts(at: [0])
             let otherSquares = board.squares.indices.filter { $0 != 0 }
             #expect(otherSquares.allSatisfy { !board.squares[$0].hasConflict })
         }
-
+        
         @Test func emptySetDoesNotSetAnyConflicts() {
             var board = Chess.Board(size: 4)
             board.setConflicts(at: [])
             #expect(board.squares.allSatisfy { !$0.hasConflict })
         }
-
+        
         @Test func doesNotAffectPieces() {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
@@ -216,32 +198,105 @@ struct ChessBoardTests {
             #expect(board.squares[0].piece?.type == .queen)
             #expect(board.squares[0].piece?.color == .light)
         }
-    }
-
-    // MARK: - removeAllConflicts
-
-    @Suite("removeAllConflicts")
-    @MainActor
-    struct RemoveAllConflicts {
-        @Test func removesAllConflicts() {
+        
+        @Test func clearsPreviousConflictsBeforeSetting() {
             var board = Chess.Board(size: 4)
-            board.setConflicts(at: [0, 5, 10, 15])
-            board.removeAllConflicts()
-            #expect(board.squares.allSatisfy { !$0.hasConflict })
+            board.setConflicts(at: [0, 1, 2])
+            board.setConflicts(at: [3])
+            #expect(board.squares[3].hasConflict)
+            #expect(!board.squares[0].hasConflict)
+            #expect(!board.squares[1].hasConflict)
+            #expect(!board.squares[2].hasConflict)
         }
-
-        @Test func doesNotAffectPieces() {
+        
+        // MARK: - merge: true
+        
+        @Test func mergePreservesExistingConflicts() {
+            var board = Chess.Board(size: 4)
+            board.setConflicts(at: [0, 1])
+            board.setConflicts(at: [2, 3], merge: true)
+            #expect(board.squares[0].hasConflict)
+            #expect(board.squares[1].hasConflict)
+            #expect(board.squares[2].hasConflict)
+            #expect(board.squares[3].hasConflict)
+        }
+        
+        @Test func mergeAddsToExistingConflictsWithoutClearing() {
+            var board = Chess.Board(size: 4)
+            board.setConflicts(at: [0])
+            board.setConflicts(at: [1], merge: true)
+            #expect(board.squares[0].hasConflict)
+            #expect(board.squares[1].hasConflict)
+        }
+        
+        @Test func mergeWithEmptySetPreservesExistingConflicts() {
+            var board = Chess.Board(size: 4)
+            board.setConflicts(at: [0, 1])
+            board.setConflicts(at: [], merge: true)
+            #expect(board.squares[0].hasConflict)
+            #expect(board.squares[1].hasConflict)
+        }
+        
+        @Test func mergeDoesNotAffectPieces() {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
-            board.setConflicts(at: [0])
-            board.removeAllConflicts()
+            board.setConflicts(at: [0], merge: true)
             #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.color == .light)
+        }
+        
+        @Test func noMergeWithEmptySetClearsAllExistingConflicts() {
+            var board = Chess.Board(size: 4)
+            board.setConflicts(at: [0, 1, 2, 3])
+            board.setConflicts(at: [], merge: false)
+            #expect(board.squares.allSatisfy { !$0.hasConflict })
+        }
+    }
+    
+    // MARK: - reset
+
+    @Suite("reset")
+    @MainActor
+    struct Reset {
+        @Test func removesAllPieces() {
+            var board = Chess.Board(size: 4)
+            board.setPiece(.lightQueen, at: 0)
+            board.setPiece(.lightQueen, at: 5)
+            board.reset()
+            #expect(board.squares.allSatisfy { $0.piece == nil })
         }
 
-        @Test func callingOnBoardWithNoConflictsDoesNotCrash() {
+        @Test func removesAllConflicts() {
             var board = Chess.Board(size: 4)
-            board.removeAllConflicts()
+            board.setConflicts(at: [0, 1, 2])
+            board.reset()
             #expect(board.squares.allSatisfy { !$0.hasConflict })
+        }
+
+        @Test func removesAllPiecesAndConflicts() {
+            var board = Chess.Board(size: 4)
+            board.setPiece(.lightQueen, at: 0)
+            board.setConflicts(at: [0, 1])
+            board.reset()
+            #expect(board.squares.allSatisfy { $0.piece == nil && !$0.hasConflict })
+        }
+
+        @Test func callingOnEmptyBoardDoesNotCrash() {
+            var board = Chess.Board(size: 4)
+            board.reset()
+            #expect(board.squares.allSatisfy { $0.piece == nil && !$0.hasConflict })
+        }
+
+        @Test func doesNotChangeBoardSize() {
+            var board = Chess.Board(size: 4)
+            board.reset()
+            #expect(board.size == 4)
+        }
+
+        @Test func doesNotChangeSquaresCount() {
+            var board = Chess.Board(size: 4)
+            board.reset()
+            #expect(board.squares.count == 16)
         }
     }
 

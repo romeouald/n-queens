@@ -33,16 +33,19 @@ extension Chess {
             squares[index].piece = nil
         }
         
-        mutating func removeAllPieces() {
-            for i in 0 ..< squares.count { squares[i].piece = nil }
-        }
-
-        mutating func setConflicts(at indices: Set<Int>) {
+        mutating func setConflicts(at indices: Set<Int>, merge: Bool = false) {
+            if !merge {
+                for i in 0 ..< squares.count { squares[i].hasConflict = false }
+            }
+            
             indices.forEach { squares[$0].hasConflict = true }
         }
         
-        mutating func removeAllConflicts() {
-            for i in 0 ..< squares.count { squares[i].hasConflict = false }
+        mutating func reset() {
+            for i in 0 ..< squares.count {
+                squares[i].piece = nil
+                squares[i].hasConflict = false
+            }
         }
     }
 }

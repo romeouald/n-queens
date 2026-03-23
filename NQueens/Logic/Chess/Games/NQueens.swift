@@ -28,8 +28,7 @@ struct NQueens: Chess.Game.Engine {
     }
     
     func reset(board: inout Chess.Board) -> Chess.Game.MoveResult {
-        board.removeAllConflicts()
-        board.removeAllPieces()
+        board.reset()
         
         return .init(
             move: .reset,
@@ -49,7 +48,6 @@ struct NQueens: Chess.Game.Engine {
     }
     
     private func evaluate(board: inout Chess.Board, after move: Chess.Game.Move) -> Chess.Game.MoveResult {
-        board.removeAllConflicts()
         var conflictingIndices: Set<Int> = []
         var queenCount = 0
         
@@ -95,10 +93,11 @@ struct NQueens: Chess.Game.Engine {
                 firstInNegDiag[negativeDiagonal] = i
             }
         }
-        
+
+        board.setConflicts(at: conflictingIndices)
+
         var gameStatus: Chess.Game.Status = .normal
         if !conflictingIndices.isEmpty {
-            board.setConflicts(at: conflictingIndices)
             gameStatus = .conflicting
         } else if queenCount == board.size {
             gameStatus = .solved
