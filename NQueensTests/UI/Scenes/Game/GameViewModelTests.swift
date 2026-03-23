@@ -63,6 +63,11 @@ struct GameViewModelTests {
             let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             #expect(vm.bestTime == nil)
         }
+
+        @Test func feedbackIsNilOnInit() {
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            #expect(vm.feedback == nil)
+        }
     }
 
     // MARK: - viewAppeared
@@ -142,6 +147,34 @@ struct GameViewModelTests {
             vm.squareTapped(at: 0)
             #expect(vm.isGameInProgress)
         }
+
+        @Test func setsFeedbackFromMoveWhenGameNotFinished() {
+            game.toggleSquareStub = .stub(move: .place(conflicting: false), status: .normal, step: 1, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.squareTapped(at: 0)
+            #expect(vm.feedback?.sound == .place)
+        }
+
+        @Test func setsFeedbackFromMoveWhenConflicting() {
+            game.toggleSquareStub = .stub(move: .place(conflicting: true), status: .conflicting, step: 1, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.squareTapped(at: 0)
+            #expect(vm.feedback?.sound == .conflict)
+        }
+
+        @Test func setsFeedbackFromMoveOnRemove() {
+            game.toggleSquareStub = .stub(move: .remove, status: .normal, step: 0, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.squareTapped(at: 0)
+            #expect(vm.feedback?.sound == .remove)
+        }
+
+        @Test func setsFeedbackFromMoveOnInvalid() {
+            game.toggleSquareStub = .stub(move: .invalid, status: .normal, step: 4, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.squareTapped(at: 0)
+            #expect(vm.feedback?.sound == .invalid)
+        }
     }
 
     // MARK: - squareTapped: game finished
@@ -159,6 +192,14 @@ struct GameViewModelTests {
             vm.viewAppeared(dismiss: {})
             vm.squareTapped(at: 0)
             #expect(vm.finishTime != nil)
+        }
+
+        @Test func setsSolvedFeedback() {
+            game.toggleSquareStub = .stub(status: .solved, step: 4, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.viewAppeared(dismiss: {})
+            vm.squareTapped(at: 0)
+            #expect(vm.feedback?.sound == .solved)
         }
 
         @Test func showsFirstWinOverlayWhenNoPreviousBestTime() {
@@ -369,6 +410,13 @@ struct GameViewModelTests {
             let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
             vm.resetPromptConfirmButtonTapped()
             #expect(game.resetCallCount == 1)
+        }
+
+        @Test func setsFeedbackFromResetMove() {
+            game.resetStub = .stub(move: .reset, status: .normal, step: 0, total: 4)
+            let vm = GameViewModel(bestTimeStore: store, clock: clock, boardSize: 4, game: game)
+            vm.resetPromptConfirmButtonTapped()
+            #expect(vm.feedback?.sound == .reset)
         }
     }
 }
