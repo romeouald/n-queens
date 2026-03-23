@@ -9,8 +9,8 @@
 import Testing
 
 private extension Chess.Piece {
-    static var lightQueen: Self { .init(type: .queen, color: .light) }
-    static var darkQueen: Self { .init(type: .queen, color: .dark) }
+    static var lightQueen: Self { .init(figure: .queen, color: .light) }
+    static var darkQueen: Self { .init(figure: .queen, color: .dark) }
 }
 
 @Suite("Chess.Board")
@@ -114,7 +114,7 @@ struct ChessBoardTests {
         @Test func placesPieceAtIndex() {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
             #expect(board.squares[0].piece?.color == .light)
         }
 
@@ -129,7 +129,7 @@ struct ChessBoardTests {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
             board.setPiece(.darkQueen, at: 0)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
             #expect(board.squares[0].piece?.color == .dark)
         }
     }
@@ -151,7 +151,7 @@ struct ChessBoardTests {
             board.setPiece(.lightQueen, at: 0)
             board.setPiece(.lightQueen, at: 5)
             board.removePiece(at: 5)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
             #expect(board.squares[0].piece?.color == .light)
         }
 
@@ -195,7 +195,7 @@ struct ChessBoardTests {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
             board.setConflicts(at: [0, 1])
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
             #expect(board.squares[0].piece?.color == .light)
         }
         
@@ -241,7 +241,7 @@ struct ChessBoardTests {
             var board = Chess.Board(size: 4)
             board.setPiece(.lightQueen, at: 0)
             board.setConflicts(at: [0], merge: true)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
             #expect(board.squares[0].piece?.color == .light)
         }
         

@@ -7,13 +7,13 @@
 
 extension Chess {
     struct Piece: Equatable, Hashable {
-        let type: `Type`
+        let figure: Figure
         let color: Color
     }
 }
 
 extension Chess.Piece {
-    enum `Type`: Equatable, Hashable {
+    enum Figure: Equatable, Hashable {
         case queen
     }
 }

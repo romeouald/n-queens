@@ -14,7 +14,7 @@ struct NQueens: Chess.Game.Engine {
         var move: Chess.Game.Move
         if square.piece == nil {
             if canPlacePiece(on: board) {
-                board.setPiece(.init(type: .queen, color: .light), at: index)
+                board.setPiece(.init(figure: .queen, color: .light), at: index)
                 move = .place(conflicting: false)
             } else {
                 move = .invalid
@@ -62,7 +62,7 @@ struct NQueens: Chess.Game.Engine {
     
     private func numberOfQueens(on board: Chess.Board) -> Int {
         board.squares
-            .filter { $0.piece?.type == .queen }
+            .filter { $0.piece?.figure == .queen }
             .count
     }
     
@@ -81,7 +81,7 @@ struct NQueens: Chess.Game.Engine {
         var firstInNegDiag = [Int: Int]() // row - col
         
         for i in 0 ..< board.squares.count {
-            guard board.squares[i].piece?.type == .queen else { continue }
+            guard board.squares[i].piece?.figure == .queen else { continue }
             queenCount += 1
             
             let row = board.row(for: i)

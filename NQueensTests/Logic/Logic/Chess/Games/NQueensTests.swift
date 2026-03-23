@@ -23,7 +23,7 @@ struct NQueensTests {
         @Test func placesQueenOnEmptySquare() {
             var board = Chess.Board(size: 4)
             _ = game.toggleSquare(at: 0, on: &board)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
         }
 
         @Test func placedQueenIsLightColored() {
@@ -65,7 +65,7 @@ struct NQueensTests {
             var board = Chess.Board(size: 4)
             [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
             _ = game.toggleSquare(at: 1, on: &board)
-            let queenCount = board.squares.filter { $0.piece?.type == .queen }.count
+            let queenCount = board.squares.filter { $0.piece?.figure == .queen }.count
             #expect(queenCount == 4)
         }
 
@@ -82,7 +82,7 @@ struct NQueensTests {
             var board = Chess.Board(size: 2)
             [0, 3].forEach { _ = game.toggleSquare(at: $0, on: &board) }
             _ = game.toggleSquare(at: 1, on: &board)
-            let queenCount = board.squares.filter { $0.piece?.type == .queen }.count
+            let queenCount = board.squares.filter { $0.piece?.figure == .queen }.count
             #expect(queenCount == 2)
         }
     }
@@ -115,7 +115,7 @@ struct NQueensTests {
             [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
             _ = game.toggleSquare(at: 0, on: &board) // remove
             _ = game.toggleSquare(at: 1, on: &board) // should be allowed now
-            #expect(board.squares[1].piece?.type == .queen)
+            #expect(board.squares[1].piece?.figure == .queen)
         }
     }
 
@@ -329,7 +329,7 @@ struct NQueensTests {
             [0, 5, 10, 15].forEach { _ = game.toggleSquare(at: $0, on: &board) }
             _ = game.reset(board: &board)
             _ = game.toggleSquare(at: 0, on: &board)
-            #expect(board.squares[0].piece?.type == .queen)
+            #expect(board.squares[0].piece?.figure == .queen)
         }
     }
 
@@ -356,7 +356,7 @@ struct NQueensTests {
             // Place 64 queens at random positions (one per row to ensure count = board size)
             let indices = (0..<64).map { $0 * 64 + Int.random(in: 0..<64, using: &rng) }
             // indices.forEach { _ = game.toggleSquare(at: $0, on: &board) }
-            indices.forEach { board.setPiece(.init(type: .queen, color: .light), at: $0) }
+            indices.forEach { board.setPiece(.init(figure: .queen, color: .light), at: $0) }
 
             let clock = ContinuousClock()
             let elapsed = clock.measure {

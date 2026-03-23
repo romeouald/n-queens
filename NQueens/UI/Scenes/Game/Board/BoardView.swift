@@ -102,11 +102,11 @@ private extension Chess.Piece {
     var image: ImageResource {
         switch self.color {
         case .light:
-            switch self.type {
+            switch self.figure {
             case .queen: .queenLight
             }
         case .dark:
-            switch self.type {
+            switch self.figure {
             case .queen: .queenDark
             }
         }
