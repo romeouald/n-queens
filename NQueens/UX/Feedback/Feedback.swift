@@ -7,12 +7,11 @@
 
 import Foundation
 import SwiftUI
-import os
 
 struct Feedback: Equatable {
-    private static let lock = OSAllocatedUnfairLock(initialState: 0)
-    
-    private let counter: Int
+    // Each instance is uniquely identified, ensuring that even identical
+    // feedbacks are never equal — making this safe to use as a trigger.
+    private let uuid = UUID()
     let sound: SoundEffect?
     let sensory: SensoryFeedback?
     
@@ -20,13 +19,6 @@ struct Feedback: Equatable {
         sound: SoundEffect? = nil,
         sensory: SensoryFeedback? = nil
     ) {
-        // A private always incrementing counter.
-        // This ensures that the feedback always triggers
-        // even if it's the same as the previous one.
-        self.counter = Self.lock.withLock { state in
-            state += 1
-            return state
-        }
         self.sound = sound
         self.sensory = sensory
     }
