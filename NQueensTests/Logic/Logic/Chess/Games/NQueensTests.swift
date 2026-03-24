@@ -346,8 +346,8 @@ struct NQueensTests {
         // so a single evaluation must not become the bottleneck in the render loop.
         //
         // Benchmarks (100 passes):
-        //   MacBook Pro M1 Pro:   0.121s (~1.21ms per call)
-        //   iPhone 15 Pro Max:    0.097s (~0.97ms per call)
+        //   MacBook Pro M1 Pro:   0.121s (~1.21ms per pass)
+        //   iPhone 15 Pro Max:    0.097s (~0.97ms per pass)
         @Test func evaluationOnLargeBoardCompletesWithinTimeLimit() {
             let game = NQueens()
             var board = Chess.Board(size: 64)
@@ -365,7 +365,6 @@ struct NQueensTests {
                 }
             }
 
-            print("elapsed: \(elapsed)")
             #expect(elapsed < .seconds(0.5))
         }
     }
