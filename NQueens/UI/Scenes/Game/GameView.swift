@@ -42,6 +42,7 @@ struct GameView: View {
             if let winOverlay = viewModel.winOverlay {
                 WinOverlay(style: winOverlay)
                     .onDismiss(viewModel.winOverlayDismissed)
+                    .transition(.opacity)
             }
         }
         .feedback(viewModel.feedback)

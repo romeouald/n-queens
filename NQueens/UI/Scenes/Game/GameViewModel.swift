@@ -96,7 +96,10 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
             }
             
             if updateBestTime { bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval) }
-            self.winOverlay = winOverlay
+            
+            withAnimation {
+                self.winOverlay = winOverlay
+            }
         } else {
             feedback = result.move.feedback
         }
