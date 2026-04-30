@@ -39,7 +39,7 @@ struct ConfigurationView: View {
 
                 Section {
                     Picker("Game", selection: $viewModel.game) {
-                        ForEach(ConfigurationViewModel.Game.allCases) { game in
+                        ForEach(Chess.Game.availableGames, id: \.self) { game in
                             Text(game.title).tag(game)
                         }
                     }
@@ -75,11 +75,14 @@ struct ConfigurationView: View {
     }
 }
 
-extension ConfigurationViewModel.Game {
+extension Chess.Game {
+    
+    static let availableGames: [Self] = [.nQueens, .nKnights]
+    
     var title: String {
         switch self {
-        case .nqueens: "N-Queens"
-        case .nknights: "N-Knights"
+        case .nQueens: "N-Queens"
+        case .nKnights: "N-Knights"
         }
     }
 }

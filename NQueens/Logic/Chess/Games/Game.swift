@@ -6,7 +6,10 @@
 //
 
 extension Chess {
-    enum Game {}
+    enum Game {
+        case nQueens
+        case nKnights
+    }
 }
  
 extension Chess.Game {
@@ -40,6 +43,15 @@ extension Chess.Game {
         
         var percentage: Double {
             Double(step) / Double(total)
+        }
+    }
+}
+
+extension Chess.Game {
+    var engine: Engine {
+        switch self {
+        case .nQueens: NQueens()
+        case .nKnights: NKnights()
         }
     }
 }
