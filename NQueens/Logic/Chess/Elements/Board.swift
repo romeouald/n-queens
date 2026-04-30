@@ -25,6 +25,11 @@ extension Chess {
             index % size
         }
         
+        func index(row: Int, column: Int) -> Int? {
+            guard row >= 0, row < size, column >= 0, column < size else { return nil }
+            return row * size + column
+        }
+        
         mutating func setPiece(_ piece: Piece, at index: Int) {
             squares[index].piece = piece
         }
