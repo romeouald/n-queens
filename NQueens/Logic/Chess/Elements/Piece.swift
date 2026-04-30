@@ -15,5 +15,6 @@ extension Chess {
 extension Chess.Piece {
     enum Figure: Equatable, Hashable {
         case queen
+        case knight
     }
 }
