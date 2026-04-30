@@ -36,6 +36,16 @@ struct ConfigurationView: View {
                     }
                 }
                 .listRowBackground(Color.overlayDark)
+
+                Section {
+                    Picker("Game", selection: $viewModel.game) {
+                        ForEach(ConfigurationViewModel.Game.allCases) { game in
+                            Text(game.title).tag(game)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                .listRowBackground(Color.overlayDark)
                 
                 Section {
                     Button(action: { viewModel.startButtonTapped() }) {
@@ -58,9 +68,18 @@ struct ConfigurationView: View {
         .tint(Color.greenDark)
         .navigationDestination(item: $viewModel.destination) { destination in
             switch destination {
-            case let .game(boardSize):
-                GameView(viewModel: .init(boardSize: boardSize, game: NQueens()))
+            case let .game(boardSize, game):
+                GameView(viewModel: .init(boardSize: boardSize, game: game.engine))
             }
+        }
+    }
+}
+
+extension ConfigurationViewModel.Game {
+    var title: String {
+        switch self {
+        case .nqueens: "N-Queens"
+        case .nknights: "N-Knights"
         }
     }
 }

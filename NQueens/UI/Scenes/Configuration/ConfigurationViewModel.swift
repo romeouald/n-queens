@@ -13,6 +13,13 @@ final class ConfigurationViewModel {
 
     var boardSize: Int = 8
     
+    enum Game: CaseIterable, Hashable, Identifiable {
+        var id: Self { self }
+        case nqueens
+        case nknights
+    }
+    var game: Game = .nknights
+    
     init(
         bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live)
     ) {
@@ -20,7 +27,7 @@ final class ConfigurationViewModel {
     }
     
     enum Destination: Hashable {
-        case game(boardSize: Int)
+        case game(boardSize: Int, game: Game)
     }
     var destination: Destination?
     
@@ -30,6 +37,15 @@ final class ConfigurationViewModel {
     }
     
     func startButtonTapped() {
-        destination = .game(boardSize: boardSize)
+        destination = .game(boardSize: boardSize, game: game)
+    }
+}
+
+extension ConfigurationViewModel.Game {
+    var engine: Chess.Game.Engine {
+        switch self {
+        case .nqueens: NQueens()
+        case .nknights: NKnights()
+        }
     }
 }
