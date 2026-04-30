@@ -104,10 +104,12 @@ private extension Chess.Piece {
         case .light:
             switch self.figure {
             case .queen: .queenLight
+            case .knight: .queenLight
             }
         case .dark:
             switch self.figure {
             case .queen: .queenDark
+            case .knight: .queenDark
             }
         }
     }
