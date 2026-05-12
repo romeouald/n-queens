@@ -14,7 +14,8 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     private var clock: GameClock
 
     private(set) var board: Chess.Board
-    private var game: any Chess.Game.Engine
+    private var game: Chess.Game
+    private var engine: any Chess.Game.Engine
     
     private(set) var bestTime: Duration?
     private(set) var startTime: (GameClock.Instant)?
@@ -48,14 +49,15 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
         bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live),
         clock: GameClock = .continuous,
         boardSize: Int,
-        game: any Chess.Game.Engine
+        game: Chess.Game
     ) {
         self.bestTimeStore = bestTimeStore
         self.clock = clock
         self.board = .init(size: boardSize)
         self.game = game
+        self.engine = game.engine
         
-        if let bestTime = bestTimeStore.bestTime(for: boardSize) {
+        if let bestTime = bestTimeStore.bestTime(for: game, boardSize: boardSize) {
             self.bestTime = Duration.seconds(bestTime)
         }
         self.progress = .init(step: 0, total: boardSize)
@@ -70,7 +72,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     func squareTapped(at index: Int) {
         guard !gameFinished else { return }
         
-        let result = game.toggleSquare(at: index, on: &board)
+        let result = engine.toggleSquare(at: index, on: &board)
         gameStatus = result.gameStatus
         progress = result.progress
         
@@ -95,7 +97,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
                 winOverlay = .solved
             }
             
-            if updateBestTime { bestTimeStore.saveBestTime(boardSize: board.size, time: elapsedTime.timeInterval) }
+            if updateBestTime { bestTimeStore.saveBestTime(game: game, boardSize: board.size, time: elapsedTime.timeInterval) }
             
             withAnimation {
                 self.winOverlay = winOverlay
@@ -141,7 +143,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
     }
     
     private func resetGame() {
-        let result = game.reset(board: &board)
+        let result = engine.reset(board: &board)
         gameStatus = result.gameStatus
         progress = result.progress
         feedback = result.move.feedback
@@ -149,7 +151,7 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
         startTime = clock.now
         finishTime = nil
 
-        if let bestTime = bestTimeStore.bestTime(for: board.size) {
+        if let bestTime = bestTimeStore.bestTime(for: game, boardSize: board.size) {
             self.bestTime = Duration.seconds(bestTime)
         }
     }
@@ -172,7 +174,7 @@ extension GameViewModel where GameClock == ContinuousClock {
         .init(
             bestTimeStore: BestTimeStore(context: .preview),
             boardSize: 4,
-            game: NQueens()
+            game: .nQueens
         )
     }
 }

@@ -26,7 +26,7 @@ final class ConfigurationViewModel {
     var destination: Destination?
     
     var bestTime: Duration? {
-        guard let bestTime = bestTimeStore.bestTime(for: boardSize) else { return nil }
+        guard let bestTime = bestTimeStore.bestTime(for: game, boardSize: boardSize) else { return nil }
         return Duration.seconds(bestTime)
     }
     

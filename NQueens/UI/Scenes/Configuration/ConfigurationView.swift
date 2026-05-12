@@ -69,7 +69,7 @@ struct ConfigurationView: View {
         .navigationDestination(item: $viewModel.destination) { destination in
             switch destination {
             case let .game(boardSize, game):
-                GameView(viewModel: .init(boardSize: boardSize, game: game.engine))
+                GameView(viewModel: .init(boardSize: boardSize, game: game))
             }
         }
     }
