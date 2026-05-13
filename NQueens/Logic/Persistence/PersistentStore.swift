@@ -8,18 +8,20 @@
 import SwiftData
 import os
 
+typealias BestTimeModel = BestTimeSchemaV2.BestTimeModel
+
 private extension ModelContainer {
     static func make(inMemory: Bool = false) -> ModelContainer? {
-        let schema = Schema([
-            BestTimeModel.self,
-        ])
         let config = ModelConfiguration(
-            schema: schema,
             isStoredInMemoryOnly: inMemory
         )
         
         do {
-            return try ModelContainer(for: schema, configurations: config)
+            return try ModelContainer(
+                for: BestTimeModel.self,
+                migrationPlan: BestTimeMigrationPlan.self,
+                configurations: config
+            )
         } catch {
             os.Logger(subsystem: "PersistentStore", category: "ModelContainer")
                 .error("Failed to initialize ModelContainer")
