@@ -11,26 +11,28 @@ import Testing
 
 final class BestTimeStoreSpy: BestTimeStoring {
 
-    // MARK: - bestTime(for:)
+    // MARK: - bestTime(for:boardSize:)
 
     private(set) var bestTimeCallCount = 0
+    private(set) var bestTimeGames: [Chess.Game] = []
     private(set) var bestTimeBoardSizes: [Int] = []
     var bestTimeStub: TimeInterval? = nil
 
-    func bestTime(for boardSize: Int) -> TimeInterval? {
+    func bestTime(for game: Chess.Game, boardSize: Int) -> TimeInterval? {
         bestTimeCallCount += 1
+        bestTimeGames.append(game)
         bestTimeBoardSizes.append(boardSize)
         return bestTimeStub
     }
 
-    // MARK: - saveBestTime(boardSize:time:)
+    // MARK: - saveBestTime(game:boardSize:time:)
 
     private(set) var saveBestTimeCallCount = 0
-    private(set) var saveBestTimeInvocations: [(boardSize: Int, time: TimeInterval)] = []
+    private(set) var saveBestTimeInvocations: [(game: Chess.Game, boardSize: Int, time: TimeInterval)] = []
 
-    func saveBestTime(boardSize: Int, time: TimeInterval) {
+    func saveBestTime(game: Chess.Game, boardSize: Int, time: TimeInterval) {
         saveBestTimeCallCount += 1
-        saveBestTimeInvocations.append((boardSize: boardSize, time: time))
+        saveBestTimeInvocations.append((game: game, boardSize: boardSize, time: time))
     }
     
 }

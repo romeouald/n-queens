@@ -49,13 +49,14 @@ final class GameViewModel<GameClock: Clock> where GameClock.Duration == Duration
         bestTimeStore: any BestTimeStoring = BestTimeStore(context: .live),
         clock: GameClock = .continuous,
         boardSize: Int,
-        game: Chess.Game
+        game: Chess.Game,
+        engine: (any Chess.Game.Engine)? = nil
     ) {
         self.bestTimeStore = bestTimeStore
         self.clock = clock
         self.board = .init(size: boardSize)
         self.game = game
-        self.engine = game.engine
+        self.engine = engine ?? game.engine
         
         if let bestTime = bestTimeStore.bestTime(for: game, boardSize: boardSize) {
             self.bestTime = Duration.seconds(bestTime)

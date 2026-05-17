@@ -83,15 +83,16 @@ struct ConfigurationViewModelTests {
             let vm = ConfigurationViewModel(bestTimeStore: BestTimeStoreSpy())
             vm.startButtonTapped()
 
-            #expect(vm.destination == .game(boardSize: 8))
+            #expect(vm.destination == .game(boardSize: 8, game: .nQueens))
         }
 
         @Test func destinationCarriesCurrentBoardSize() {
             let vm = ConfigurationViewModel(bestTimeStore: BestTimeStoreSpy())
             vm.boardSize = 10
+            vm.game = .nKnights
             vm.startButtonTapped()
 
-            #expect(vm.destination == .game(boardSize: 10))
+            #expect(vm.destination == .game(boardSize: 10, game: .nKnights))
         }
     }
 }

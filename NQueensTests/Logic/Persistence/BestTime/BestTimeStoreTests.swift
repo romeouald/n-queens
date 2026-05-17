@@ -21,27 +21,27 @@ struct BestTimeStoreTests {
     struct BestTimeFor {
         @Test func returnsNilWhenNoEntryExists() {
             let store = BestTimeStore(context: .test)
-            #expect(store.bestTime(for: 4) == nil)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == nil)
         }
 
         @Test func returnsStoredTimeForMatchingBoardSize() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 42.0)
-            #expect(store.bestTime(for: 4) == 42.0)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 42.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 42.0)
         }
 
         @Test func returnsNilForDifferentBoardSize() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 42.0)
-            #expect(store.bestTime(for: 8) == nil)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 42.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 8) == nil)
         }
 
         @Test func returnsCorrectTimeWhenMultipleSizesStored() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 42.0)
-            store.saveBestTime(boardSize: 8, time: 99.0)
-            #expect(store.bestTime(for: 4) == 42.0)
-            #expect(store.bestTime(for: 8) == 99.0)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 42.0)
+            store.saveBestTime(game: .nQueens, boardSize: 8, time: 99.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 42.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 8) == 99.0)
         }
     }
 
@@ -52,26 +52,26 @@ struct BestTimeStoreTests {
     struct SaveBestTime {
         @Test func persistsTimeForBoardSize() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 55.0)
-            #expect(store.bestTime(for: 4) == 55.0)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 55.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 55.0)
         }
 
         @Test func canSaveMultipleDifferentBoardSizes() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 10.0)
-            store.saveBestTime(boardSize: 6, time: 20.0)
-            store.saveBestTime(boardSize: 8, time: 30.0)
-            #expect(store.bestTime(for: 4) == 10.0)
-            #expect(store.bestTime(for: 6) == 20.0)
-            #expect(store.bestTime(for: 8) == 30.0)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 10.0)
+            store.saveBestTime(game: .nQueens, boardSize: 6, time: 20.0)
+            store.saveBestTime(game: .nQueens, boardSize: 8, time: 30.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 10.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 6) == 20.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 8) == 30.0)
         }
 
         @Test func savingAgainForSameSizeOverwritesPreviousEntry() {
             let store = BestTimeStore(context: .test)
-            store.saveBestTime(boardSize: 4, time: 100.0)
-            #expect(store.bestTime(for: 4) == 100.0)
-            store.saveBestTime(boardSize: 4, time: 50.0)
-            #expect(store.bestTime(for: 4) == 50)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 100.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 100.0)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 50.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == 50)
         }
     }
 
@@ -86,13 +86,13 @@ struct BestTimeStoreTests {
         
         @Test func bestTimeReturnsNilWhenContextIsNil() {
             let store = BestTimeStore(context: nil)
-            #expect(store.bestTime(for: 4) == nil)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == nil)
         }
 
         @Test func saveBestTimeDoesNotCrashWhenContextIsNil() {
             let store = BestTimeStore(context: nil)
-            store.saveBestTime(boardSize: 4, time: 42.0)
-            #expect(store.bestTime(for: 4) == nil)
+            store.saveBestTime(game: .nQueens, boardSize: 4, time: 42.0)
+            #expect(store.bestTime(for: .nQueens, boardSize: 4) == nil)
         }
     }
 }
